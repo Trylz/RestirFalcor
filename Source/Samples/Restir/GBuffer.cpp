@@ -17,22 +17,22 @@ const ChannelList kGBufferChannels = {
     // clang-format on
 };
 
-GBuffer::GBuffer(ref<Device> pDevice, ref<Scene> pScene, uint32_t width, uint32_t height) : RenderPass(pDevice), mpScene(pScene)
+GBuffer::GBuffer(ref<Device> pDevice, ref<Scene> pScene, uint32_t width, uint32_t height)
+   : mpDevice(pDevice)
+    ,mpScene(pScene)
+    ,mWidth(width)
+    ,mHeight(height)
 {
-    createTextures(pDevice, width, height);
-    initializeGraphicStates(pDevice);
+    createTextures();
+    initializeGraphicStates();
 }
 
-void GBuffer::createTextures(ref<Device> pDevice, uint32_t width, uint32_t height)
+void GBuffer::createTextures()
 {
-    // Set witdh and height
-    mWidth = width;
-    mHeight = height;
-
     // Create gbuffer textures.
-    mPositionWsTexture = pDevice->createTexture2D(
-        width,
-        height,
+    mPositionWsTexture = mpDevice->createTexture2D(
+        mWidth,
+        mHeight,
         ResourceFormat::RGBA32Float,
         1,
         1,
@@ -40,9 +40,9 @@ void GBuffer::createTextures(ref<Device> pDevice, uint32_t width, uint32_t heigh
         /* ResourceBindFlags::UnorderedAccess | */ ResourceBindFlags::ShaderResource
     );
 
-    mNormalWsTexture = pDevice->createTexture2D(
-        width,
-        height,
+    mNormalWsTexture = mpDevice->createTexture2D(
+        mWidth,
+        mHeight,
         ResourceFormat::RGBA32Float,
         1,
         1,
@@ -50,9 +50,9 @@ void GBuffer::createTextures(ref<Device> pDevice, uint32_t width, uint32_t heigh
         /* ResourceBindFlags::UnorderedAccess | */ ResourceBindFlags::ShaderResource
     );
 
-    mTangentWsTexture = pDevice->createTexture2D(
-        width,
-        height,
+    mTangentWsTexture = mpDevice->createTexture2D(
+        mWidth,
+        mHeight,
         ResourceFormat::RGBA32Float,
         1,
         1,
@@ -60,9 +60,9 @@ void GBuffer::createTextures(ref<Device> pDevice, uint32_t width, uint32_t heigh
         /* ResourceBindFlags::UnorderedAccess | */ ResourceBindFlags::ShaderResource
     );
 
-    FaceNormalWsTexture = pDevice->createTexture2D(
-        width,
-        height,
+    mFaceNormalWsTexture = mpDevice->createTexture2D(
+        mWidth,
+        mHeight,
         ResourceFormat::RGBA32Float,
         1,
         1,
@@ -70,18 +70,18 @@ void GBuffer::createTextures(ref<Device> pDevice, uint32_t width, uint32_t heigh
         /* ResourceBindFlags::UnorderedAccess | */ ResourceBindFlags::ShaderResource
     );
 
-    mTextureCoordTexture = pDevice->createTexture2D(
-        width,
-        height,
+    mTextureCoordTexture = mpDevice->createTexture2D(
+        mWidth,
+        mHeight,
         ResourceFormat::RG32Float,
         1,
         1,
         nullptr,
         /* ResourceBindFlags::UnorderedAccess | */ ResourceBindFlags::ShaderResource
     );
-    mTextureGradientsTexture = pDevice->createTexture2D(
-        width,
-        height,
+    mTextureGradientsTexture = mpDevice->createTexture2D(
+        mWidth,
+        mHeight,
         ResourceFormat::RGBA16Float,
         1,
         1,
@@ -89,9 +89,9 @@ void GBuffer::createTextures(ref<Device> pDevice, uint32_t width, uint32_t heigh
         /* ResourceBindFlags::UnorderedAccess | */ ResourceBindFlags::ShaderResource
     );
 
-    mMotionVectorTexture = pDevice->createTexture2D(
-        width,
-        height,
+    mMotionVectorTexture = mpDevice->createTexture2D(
+        mWidth,
+        mHeight,
         ResourceFormat::RG32Float,
         1,
         1,
@@ -99,9 +99,9 @@ void GBuffer::createTextures(ref<Device> pDevice, uint32_t width, uint32_t heigh
         /* ResourceBindFlags::UnorderedAccess | */ ResourceBindFlags::ShaderResource
     );
 
-    mMaterialDataTexture = pDevice->createTexture2D(
-        width,
-        height,
+    mMaterialDataTexture = mpDevice->createTexture2D(
+        mWidth,
+        mHeight,
         ResourceFormat::RGBA32Uint,
         1,
         1,
@@ -109,9 +109,9 @@ void GBuffer::createTextures(ref<Device> pDevice, uint32_t width, uint32_t heigh
         /* ResourceBindFlags::UnorderedAccess | */ ResourceBindFlags::ShaderResource
     );
 
-    mDepthTexture = pDevice->createTexture2D(
-        width,
-        height,
+    mDepthTexture = mpDevice->createTexture2D(
+        mWidth,
+        mHeight,
         ResourceFormat::D32Float,
         1,
         1,
@@ -120,26 +120,27 @@ void GBuffer::createTextures(ref<Device> pDevice, uint32_t width, uint32_t heigh
     );
 }
 
-void GBuffer::initializeGraphicStates(ref<Device> pDevice)
+void GBuffer::initializeGraphicStates()
 {
-    if (!pDevice->isShaderModelSupported(ShaderModel::SM6_2))
+    if (!mpDevice->isShaderModelSupported(ShaderModel::SM6_2))
         FALCOR_THROW("GBuffer requires Shader Model 6.2 support.");
-    if (!pDevice->isFeatureSupported(Device::SupportedFeatures::Barycentrics))
+    if (!mpDevice->isFeatureSupported(Device::SupportedFeatures::Barycentrics))
         FALCOR_THROW("GBuffer requires pixel shader barycentrics support.");
-    if (!pDevice->isFeatureSupported(Device::SupportedFeatures::RasterizerOrderedViews))
+    if (!mpDevice->isFeatureSupported(Device::SupportedFeatures::RasterizerOrderedViews))
         FALCOR_THROW("GBuffer requires rasterizer ordered views (ROVs) support.");
 
-    mDepthPass.pState = GraphicsState::create(pDevice);
-    mGBufferPass.pState = GraphicsState::create(pDevice);
+    mDepthPass.pState = GraphicsState::create(mpDevice);
+    mGBufferPass.pState = GraphicsState::create(mpDevice);
 
     DepthStencilState::Desc dsDesc;
     dsDesc.setDepthFunc(ComparisonFunc::Equal).setDepthWriteMask(false);
     ref<DepthStencilState> pDsState = DepthStencilState::create(dsDesc);
     mGBufferPass.pState->setDepthStencilState(pDsState);
 
-    mpFbo = Fbo::create(pDevice);
+    mpFbo = Fbo::create(mpDevice);
 }
 
+/*
 RenderPassReflection GBuffer::reflect(const CompileData& compileData)
 {
     RenderPassReflection reflector;
@@ -158,6 +159,7 @@ RenderPassReflection GBuffer::reflect(const CompileData& compileData)
 
     return reflector;
 }
+*/
 
 void GBuffer::compilePrograms()
 {
@@ -205,7 +207,32 @@ void GBuffer::compilePrograms()
 
 void GBuffer::render(RenderContext* pRenderContext)
 {
+    const RasterizerState::CullMode cullMode = RasterizerState::CullMode::None;
 
+    // Depth pass.
+    {
+        pRenderContext->clearDsv(mDepthTexture->getDSV().get(), 1.f, 0);
+        mpScene->rasterize(pRenderContext, mDepthPass.pState.get(), mDepthPass.pVars.get(), cullMode);
+    }
+
+    // GBuffer pass.
+    {
+        mpFbo->attachColorTarget(mPositionWsTexture, 0u);
+        mpFbo->attachColorTarget(mNormalWsTexture, 1u);
+        mpFbo->attachColorTarget(mTangentWsTexture, 2u);
+        mpFbo->attachColorTarget(mFaceNormalWsTexture, 3u);
+        mpFbo->attachColorTarget(mTextureCoordTexture, 4u);
+        mpFbo->attachColorTarget(mTextureGradientsTexture, 5u);
+        mpFbo->attachColorTarget(mMotionVectorTexture, 6u);
+        mpFbo->attachColorTarget(mMaterialDataTexture, 7u);
+
+        pRenderContext->clearFbo(mpFbo.get(), float4(0), 1.f, 0, FboAttachmentType::Color);
+
+        auto var = mGBufferPass.pVars->getRootVar();
+        var["PerFrameCB"]["gFrameDim"] = uint2(mWidth, mHeight);
+        mGBufferPass.pState->setFbo(mpFbo);
+        mpScene->rasterize(pRenderContext, mGBufferPass.pState.get(), mGBufferPass.pVars.get(), cullMode);
+    }
 }
 
 } // namespace Restir
