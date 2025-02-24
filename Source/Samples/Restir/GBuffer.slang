@@ -96,7 +96,7 @@ void primaryAnyHit(inout PrimaryRayData rayData, BuiltInTriangleIntersectionAttr
 void rayGen()
 {
     uint3 launchIndex = DispatchRaysIndex();
-    const RayDesc ray = = gScene.camera.computeRayPinhole(launchIndex.xy, viewportDims).toRayDesc();
+    const RayDesc ray = gScene.camera.computeRayPinhole(launchIndex.xy, viewportDims).toRayDesc();
 
     PrimaryRayData hitData;
     TraceRay(gScene.rtAccel, 0 /*rayFlags*/, 0xFF, 0 /* ray index*/, rayTypeCount, 0, ray, hitData);
