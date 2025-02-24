@@ -116,7 +116,7 @@ void GBuffer::createTextures()
         1,
         1,
         nullptr,
-        /* ResourceBindFlags::UnorderedAccess | */ ResourceBindFlags::ShaderResource
+        /* ResourceBindFlags::ShaderResource | */ ResourceBindFlags::DepthStencil
     );
 }
 
