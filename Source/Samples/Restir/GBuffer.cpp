@@ -17,8 +17,7 @@ const ChannelList kGBufferChannels = {
     // clang-format on
 };
 
-GBuffer::GBuffer(ref<Device> pDevice, uint32_t width, uint32_t height)
-: RenderPass(pDevice)
+GBuffer::GBuffer(ref<Device> pDevice, ref<Scene> pScene, uint32_t width, uint32_t height) : RenderPass(pDevice), mpScene(pScene)
 {
     createTextures(pDevice, width, height);
     initializeGraphicStates(pDevice);

@@ -5,7 +5,7 @@ namespace Restir
 class GBuffer : public RenderPass
 {
 public:
-    GBuffer(ref<Device> pDevice, uint32_t width, uint32_t height);
+    GBuffer(ref<Device> pDevice, ref<Scene> pScene, uint32_t width, uint32_t height);
     void render(RenderContext* pRenderContext);
 
     RenderPassReflection reflect(const CompileData& compileData) override;
@@ -25,6 +25,8 @@ private:
 
     uint32_t mWidth;
     uint32_t mHeight;
+
+    ref<Scene> mpScene;
 
     ref<Texture> mPositionWsTexture;
     ref<Texture> mNormalWsTexture;
