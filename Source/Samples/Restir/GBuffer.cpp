@@ -20,128 +20,68 @@ const ChannelList kGBufferChannels = {
 GBuffer::GBuffer(ref<Device> pDevice, uint32_t width, uint32_t height) : mpDevice(pDevice), mWidth(width), mHeight(height)
 {
     createTextures();
-    initializeGraphicStates();
 }
 
 void GBuffer::createTextures()
 {
     // Create gbuffer textures.
     mPositionWsTexture = mpDevice->createTexture2D(
-        mWidth, mHeight, ResourceFormat::RGBA32Float, 1, 1, nullptr, ResourceBindFlags::ShaderResource | ResourceBindFlags::RenderTarget
+        mWidth, mHeight, ResourceFormat::RGBA32Float, 1, 1, nullptr, ResourceBindFlags::ShaderResource | ResourceBindFlags::UnorderedAccess
     );
 
     mNormalWsTexture = mpDevice->createTexture2D(
-        mWidth, mHeight, ResourceFormat::RGBA32Float, 1, 1, nullptr, ResourceBindFlags::ShaderResource | ResourceBindFlags::RenderTarget
+        mWidth, mHeight, ResourceFormat::RGBA32Float, 1, 1, nullptr, ResourceBindFlags::ShaderResource | ResourceBindFlags::UnorderedAccess
     );
 
-    mTangentWsTexture = mpDevice->createTexture2D(
-        mWidth, mHeight, ResourceFormat::RGBA32Float, 1, 1, nullptr, ResourceBindFlags::ShaderResource | ResourceBindFlags::RenderTarget
-    );
-
-    mFaceNormalWsTexture = mpDevice->createTexture2D(
-        mWidth, mHeight, ResourceFormat::RGBA32Float, 1, 1, nullptr, ResourceBindFlags::ShaderResource | ResourceBindFlags::RenderTarget
-    );
-
-    mTextureCoordTexture = mpDevice->createTexture2D(
-        mWidth, mHeight, ResourceFormat::RG32Float, 1, 1, nullptr, ResourceBindFlags::ShaderResource | ResourceBindFlags::RenderTarget
-    );
-    mTextureGradientsTexture = mpDevice->createTexture2D(
-        mWidth, mHeight, ResourceFormat::RGBA16Float, 1, 1, nullptr, ResourceBindFlags::ShaderResource | ResourceBindFlags::RenderTarget
+    mAlbedoTexture = mpDevice->createTexture2D(
+        mWidth, mHeight, ResourceFormat::RGBA32Float, 1, 1, nullptr, ResourceBindFlags::ShaderResource | ResourceBindFlags::UnorderedAccess
     );
 
     mMotionVectorTexture = mpDevice->createTexture2D(
-        mWidth, mHeight, ResourceFormat::RG32Float, 1, 1, nullptr, ResourceBindFlags::ShaderResource | ResourceBindFlags::RenderTarget
+        mWidth, mHeight, ResourceFormat::RGBA32Float, 1, 1, nullptr, ResourceBindFlags::ShaderResource | ResourceBindFlags::UnorderedAccess
     );
-
-    mMaterialDataTexture = mpDevice->createTexture2D(
-        mWidth, mHeight, ResourceFormat::RGBA32Uint, 1, 1, nullptr, ResourceBindFlags::ShaderResource | ResourceBindFlags::RenderTarget
-    );
-
-    mDepthTexture = mpDevice->createTexture2D(mWidth, mHeight, ResourceFormat::D32Float, 1, 1, nullptr, ResourceBindFlags::DepthStencil);
 }
-
-void GBuffer::initializeGraphicStates()
-{
-    if (!mpDevice->isShaderModelSupported(ShaderModel::SM6_2))
-        FALCOR_THROW("GBuffer requires Shader Model 6.2 support.");
-    if (!mpDevice->isFeatureSupported(Device::SupportedFeatures::Barycentrics))
-        FALCOR_THROW("GBuffer requires pixel shader barycentrics support.");
-    if (!mpDevice->isFeatureSupported(Device::SupportedFeatures::RasterizerOrderedViews))
-        FALCOR_THROW("GBuffer requires rasterizer ordered views (ROVs) support.");
-
-    mDepthPass.pState = GraphicsState::create(mpDevice);
-    mGBufferPass.pState = GraphicsState::create(mpDevice);
-
-    DepthStencilState::Desc dsDesc;
-    dsDesc.setDepthFunc(ComparisonFunc::Equal).setDepthWriteMask(false);
-    ref<DepthStencilState> pDsState = DepthStencilState::create(dsDesc);
-    mGBufferPass.pState->setDepthStencilState(pDsState);
-
-    mpFbo = Fbo::create(mpDevice);
-}
-
-/*
-RenderPassReflection GBuffer::reflect(const CompileData& compileData)
-{
-    RenderPassReflection reflector;
-
-    // Add the required depth output. This always exists.
-    reflector.addOutput(kDepthName, "Depth buffer")
-        .format(ResourceFormat::D32Float)
-        .bindFlags(ResourceBindFlags::DepthStencil)
-        .texture2D(mWidth, mHeight);
-
-    // Add all the other outputs.
-    // The default channels are written as render targets, the rest as UAVs as there is way to assign/pack render targets yet.
-    addRenderPassOutputs(reflector, kGBufferChannels, ResourceBindFlags::RenderTarget, sz);
-   // addRenderPassOutputs(reflector, kGBufferExtraChannels, ResourceBindFlags::UnorderedAccess, sz);
-    //reflector.getField(kVBufferName)->format(mVBufferFormat);
-
-    return reflector;
-}
-*/
 
 void GBuffer::compilePrograms()
 {
-    // Some of the stuff here are recreated every frame when i check GBufferRaster. Why?
-    // Depth pass..
-    {
-        ProgramDesc desc;
-        desc.addShaderModules(mpScene->getShaderModules());
-        desc.addShaderLibrary("Samples/Restir/DepthPass.slang").vsEntry("vsMain").psEntry("psMain");
-        desc.addTypeConformances(mpScene->getTypeConformances());
+    // We'll now create a raytracing program. To do that we need to setup two things:
+    // - A program description (ProgramDesc). This holds all shader entry points, compiler flags, macro defintions,
+    // etc.
+    // - A binding table (RtBindingTable). This maps shaders to geometries in the scene, and sets the ray generation and
+    // miss shaders.
+    //
+    // After setting up these, we can create the Program and associated RtProgramVars that holds the variable/resource
+    // bindings. The Program can be reused for different scenes, but RtProgramVars needs to binding table which is
+    // Scene-specific and needs to be re-created when switching scene. In this example, we re-create both the program
+    // and vars when a scene is loaded.
 
-        mDepthPass.pProgram = Program::create(mpDevice, desc, mpScene->getSceneDefines());
-        mDepthPass.pState->setProgram(mDepthPass.pProgram);
-        mDepthPass.pVars = ProgramVars::create(mpDevice, mDepthPass.pProgram.get());
+    auto shaderModules = mpScene->getShaderModules();
+    auto typeConformances = mpScene->getTypeConformances();
 
-        mpFbo->attachDepthStencilTarget(mDepthTexture);
-        mDepthPass.pState->setFbo(mpFbo);
-    }
+    // Get scene defines. These need to be set on any program using the scene.
+    auto defines = mpScene->getSceneDefines();
 
-    // GBuffer pass.
-    {
-        ProgramDesc desc;
-        desc.addShaderModules(mpScene->getShaderModules());
-        desc.addShaderLibrary("Samples/Restir/GBuffer.slang").vsEntry("vsMain").psEntry("psMain");
-        desc.addTypeConformances(mpScene->getTypeConformances());
+    ProgramDesc rtProgDesc;
+    rtProgDesc.addShaderModules(shaderModules);
+    rtProgDesc.addShaderLibrary("Samples/Restir/GBuffer.slang");
+    rtProgDesc.addTypeConformances(typeConformances);
+    rtProgDesc.setMaxTraceRecursionDepth(1); // 1 for calling TraceRay from RayGen, 1 for calling it from the
+    // primary-ray ClosestHit shader for reflections, 1 for reflection ray
+    // tracing a shadow ray
+    rtProgDesc.setMaxPayloadSize(24); // The largest ray payload struct (PrimaryRayData) is 24 bytes. The payload size
+    // should be set as small as possible for maximum performance.
 
-        mGBufferPass.pProgram = Program::create(mpDevice, desc, mpScene->getSceneDefines());
-        mGBufferPass.pState->setProgram(mGBufferPass.pProgram);
+    ref<RtBindingTable> sbt = RtBindingTable::create(2, 2, mpScene->getGeometryCount());
+    sbt->setRayGen(rtProgDesc.addRayGen("rayGen"));
+    sbt->setMiss(0, rtProgDesc.addMiss("primaryMiss"));
+    sbt->setMiss(1, rtProgDesc.addMiss("shadowMiss"));
+    auto primary = rtProgDesc.addHitGroup("primaryClosestHit", "primaryAnyHit");
+    auto shadow = rtProgDesc.addHitGroup("", "shadowAnyHit");
+    sbt->setHitGroup(0, mpScene->getGeometryIDs(Scene::GeometryType::TriangleMesh), primary);
+    sbt->setHitGroup(1, mpScene->getGeometryIDs(Scene::GeometryType::TriangleMesh), shadow);
 
-        // Set program defines.
-        mGBufferPass.pProgram->addDefine("ADJUST_SHADING_NORMALS", "0");
-        mGBufferPass.pProgram->addDefine("USE_ALPHA_TEST", "0");
-
-        // For optional I/O resources, set 'is_valid_<name>' defines to inform the program of which ones it can access.
-        // TODO: This should be moved to a more general mechanism using Slang.
-        // mGBufferPass.pProgram->addDefines(getValidResourceDefines(kGBufferChannels, renderData));
-        // mGBufferPass.pProgram->addDefines(getValidResourceDefines(kGBufferExtraChannels, renderData));
-
-        // Create program vars.
-        mGBufferPass.pVars = ProgramVars::create(mpDevice, mGBufferPass.pProgram.get());
-        mGBufferPass.pState->setFbo(mpFbo); // Sets the viewport
-    }
+    mpRaytraceProgram = Program::create(mpDevice, rtProgDesc, defines);
+    mpRtVars = RtProgramVars::create(mpDevice, mpRaytraceProgram, sbt);
 }
 
 void GBuffer::render(RenderContext* pRenderContext, ref<Scene> pScene)
@@ -152,34 +92,14 @@ void GBuffer::render(RenderContext* pRenderContext, ref<Scene> pScene)
         compilePrograms();
     }
 
-    const RasterizerState::CullMode cullMode = RasterizerState::CullMode::None;
+    auto var = mpRtVars->getRootVar();
+    var["PerFrameCB"]["viewportDims"] = float2(mWidth, mHeight);
+    var["gPositionWs"] = mPositionWsTexture;
+    var["gNormalWs"] = mNormalWsTexture;
+    var["gAlbedo"] = mAlbedoTexture;
+    var["gMotionVector"] = mMotionVectorTexture;
 
-    // Depth pass.
-    {
-        FALCOR_PROFILE(pRenderContext, "GBuffer::render Depth");
-        pRenderContext->clearDsv(mDepthTexture->getDSV().get(), 1.f, 0);
-        mpScene->rasterize(pRenderContext, mDepthPass.pState.get(), mDepthPass.pVars.get(), cullMode);
-    }
-
-    // GBuffer pass.
-    {
-        FALCOR_PROFILE(pRenderContext, "GBuffer::render Gbuffer");
-        mpFbo->attachColorTarget(mPositionWsTexture, 0u);
-        mpFbo->attachColorTarget(mNormalWsTexture, 1u);
-        mpFbo->attachColorTarget(mTangentWsTexture, 2u);
-        mpFbo->attachColorTarget(mFaceNormalWsTexture, 3u);
-        mpFbo->attachColorTarget(mTextureCoordTexture, 4u);
-        mpFbo->attachColorTarget(mTextureGradientsTexture, 5u);
-        mpFbo->attachColorTarget(mMotionVectorTexture, 6u);
-        mpFbo->attachColorTarget(mMaterialDataTexture, 7u);
-
-        pRenderContext->clearFbo(mpFbo.get(), float4(0), 1.f, 0, FboAttachmentType::Color);
-
-        auto var = mGBufferPass.pVars->getRootVar();
-        var["PerFrameCB"]["gFrameDim"] = uint2(mWidth, mHeight);
-        mGBufferPass.pState->setFbo(mpFbo);
-        mpScene->rasterize(pRenderContext, mGBufferPass.pState.get(), mGBufferPass.pVars.get(), cullMode);
-    }
+    mpScene->raytrace(pRenderContext, mpRaytraceProgram.get(), mpRtVars, uint3(mWidth, mHeight, 1));
 }
 
 } // namespace Restir
