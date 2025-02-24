@@ -2,11 +2,13 @@
 
 namespace Restir
 {
-class GBuffer
+class GBuffer : public RenderPass
 {
 public:
     GBuffer(ref<Device> pDevice, uint32_t width, uint32_t height);
     void render(RenderContext* pRenderContext);
+
+    RenderPassReflection reflect(const CompileData& compileData) override;
 
     inline const ref<Texture>& getPositionWsTexture() const { return mPositionWsTexture; }
     inline const ref<Texture>& getNormalWsTexture() const { return mNormalWsTexture; }
@@ -20,6 +22,9 @@ public:
 private:
     void createTextures(ref<Device> pDevice, uint32_t width, uint32_t height);
     void initializeGraphicStates(ref<Device> pDevice);
+
+    uint32_t mWidth;
+    uint32_t mHeight;
 
     ref<Texture> mPositionWsTexture;
     ref<Texture> mNormalWsTexture;
