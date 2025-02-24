@@ -17,9 +17,8 @@ const ChannelList kGBufferChannels = {
     // clang-format on
 };
 
-GBuffer::GBuffer(ref<Device> pDevice, ref<Scene> pScene, uint32_t width, uint32_t height)
+GBuffer::GBuffer(ref<Device> pDevice, uint32_t width, uint32_t height)
    : mpDevice(pDevice)
-    ,mpScene(pScene)
     ,mWidth(width)
     ,mHeight(height)
 {
@@ -205,8 +204,14 @@ void GBuffer::compilePrograms()
     }
 }
 
-void GBuffer::render(RenderContext* pRenderContext)
+void GBuffer::render(RenderContext* pRenderContext, ref<Scene> pScene)
 {
+    if (pScene != mpScene)
+    {
+        mpScene = pScene.get();
+        compilePrograms();
+    }
+
     const RasterizerState::CullMode cullMode = RasterizerState::CullMode::None;
 
     // Depth pass.

@@ -5,8 +5,8 @@ namespace Restir
 class GBuffer /*: public RenderPass*/
 {
 public:
-    GBuffer(ref<Device> pDevice, ref<Scene> pScene, uint32_t width, uint32_t height);
-    void render(RenderContext* pRenderContext);
+    GBuffer(ref<Device> pDevice, uint32_t width, uint32_t height);
+    void render(RenderContext* pRenderContext, ref<Scene> pScene);
 
     //RenderPassReflection reflect(const CompileData& compileData) override;
 
@@ -25,7 +25,7 @@ private:
     void compilePrograms();
 
     ref<Device> mpDevice;
-    ref<Scene> mpScene;
+    Scene* mpScene = nullptr;// TODO use smart pointer
 
     uint32_t mWidth;
     uint32_t mHeight;

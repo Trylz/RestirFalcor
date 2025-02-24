@@ -104,7 +104,7 @@ void RestirApp::loadScene(const std::filesystem::path& path, const Fbo* pTargetF
     mpCamera->setAspectRatio((float)pTargetFbo->getWidth() / (float)pTargetFbo->getHeight());
 
     // Create the passes.
-    mpGufferPass.reset(new Restir::GBuffer(getDevice(), mpScene, pTargetFbo->getWidth(), pTargetFbo->getHeight()));
+    mpGufferPass.reset(new Restir::GBuffer(getDevice(), pTargetFbo->getWidth(), pTargetFbo->getHeight()));
 }
 
 void RestirApp::setPerFrameVars(const Fbo* pTargetFbo)
@@ -130,7 +130,7 @@ void RestirApp::render(RenderContext* pRenderContext, const ref<Fbo>& pTargetFbo
 
     setPerFrameVars(pTargetFbo.get());
 
-    mpGufferPass->render(pRenderContext);
+    mpGufferPass->render(pRenderContext, mpScene);
     pRenderContext->blit(mpGufferPass->getNormalWsTexture()->getSRV(), pTargetFbo->getRenderTargetView(0));
 }
 
