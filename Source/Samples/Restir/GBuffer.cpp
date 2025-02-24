@@ -17,10 +17,7 @@ const ChannelList kGBufferChannels = {
     // clang-format on
 };
 
-GBuffer::GBuffer(ref<Device> pDevice, uint32_t width, uint32_t height)
-   : mpDevice(pDevice)
-    ,mWidth(width)
-    ,mHeight(height)
+GBuffer::GBuffer(ref<Device> pDevice, uint32_t width, uint32_t height) : mpDevice(pDevice), mWidth(width), mHeight(height)
 {
     createTextures();
     initializeGraphicStates();
@@ -30,93 +27,37 @@ void GBuffer::createTextures()
 {
     // Create gbuffer textures.
     mPositionWsTexture = mpDevice->createTexture2D(
-        mWidth,
-        mHeight,
-        ResourceFormat::RGBA32Float,
-        1,
-        1,
-        nullptr,
-        /* ResourceBindFlags::UnorderedAccess | */ ResourceBindFlags::ShaderResource
+        mWidth, mHeight, ResourceFormat::RGBA32Float, 1, 1, nullptr, ResourceBindFlags::ShaderResource | ResourceBindFlags::RenderTarget
     );
 
     mNormalWsTexture = mpDevice->createTexture2D(
-        mWidth,
-        mHeight,
-        ResourceFormat::RGBA32Float,
-        1,
-        1,
-        nullptr,
-        /* ResourceBindFlags::UnorderedAccess | */ ResourceBindFlags::ShaderResource
+        mWidth, mHeight, ResourceFormat::RGBA32Float, 1, 1, nullptr, ResourceBindFlags::ShaderResource | ResourceBindFlags::RenderTarget
     );
 
     mTangentWsTexture = mpDevice->createTexture2D(
-        mWidth,
-        mHeight,
-        ResourceFormat::RGBA32Float,
-        1,
-        1,
-        nullptr,
-        /* ResourceBindFlags::UnorderedAccess | */ ResourceBindFlags::ShaderResource
+        mWidth, mHeight, ResourceFormat::RGBA32Float, 1, 1, nullptr, ResourceBindFlags::ShaderResource | ResourceBindFlags::RenderTarget
     );
 
     mFaceNormalWsTexture = mpDevice->createTexture2D(
-        mWidth,
-        mHeight,
-        ResourceFormat::RGBA32Float,
-        1,
-        1,
-        nullptr,
-        /* ResourceBindFlags::UnorderedAccess | */ ResourceBindFlags::ShaderResource
+        mWidth, mHeight, ResourceFormat::RGBA32Float, 1, 1, nullptr, ResourceBindFlags::ShaderResource | ResourceBindFlags::RenderTarget
     );
 
     mTextureCoordTexture = mpDevice->createTexture2D(
-        mWidth,
-        mHeight,
-        ResourceFormat::RG32Float,
-        1,
-        1,
-        nullptr,
-        /* ResourceBindFlags::UnorderedAccess | */ ResourceBindFlags::ShaderResource
+        mWidth, mHeight, ResourceFormat::RG32Float, 1, 1, nullptr, ResourceBindFlags::ShaderResource | ResourceBindFlags::RenderTarget
     );
     mTextureGradientsTexture = mpDevice->createTexture2D(
-        mWidth,
-        mHeight,
-        ResourceFormat::RGBA16Float,
-        1,
-        1,
-        nullptr,
-        /* ResourceBindFlags::UnorderedAccess | */ ResourceBindFlags::ShaderResource
+        mWidth, mHeight, ResourceFormat::RGBA16Float, 1, 1, nullptr, ResourceBindFlags::ShaderResource | ResourceBindFlags::RenderTarget
     );
 
     mMotionVectorTexture = mpDevice->createTexture2D(
-        mWidth,
-        mHeight,
-        ResourceFormat::RG32Float,
-        1,
-        1,
-        nullptr,
-        /* ResourceBindFlags::UnorderedAccess | */ ResourceBindFlags::ShaderResource
+        mWidth, mHeight, ResourceFormat::RG32Float, 1, 1, nullptr, ResourceBindFlags::ShaderResource | ResourceBindFlags::RenderTarget
     );
 
     mMaterialDataTexture = mpDevice->createTexture2D(
-        mWidth,
-        mHeight,
-        ResourceFormat::RGBA32Uint,
-        1,
-        1,
-        nullptr,
-        /* ResourceBindFlags::UnorderedAccess | */ ResourceBindFlags::ShaderResource
+        mWidth, mHeight, ResourceFormat::RGBA32Uint, 1, 1, nullptr, ResourceBindFlags::ShaderResource | ResourceBindFlags::RenderTarget
     );
 
-    mDepthTexture = mpDevice->createTexture2D(
-        mWidth,
-        mHeight,
-        ResourceFormat::D32Float,
-        1,
-        1,
-        nullptr,
-        /* ResourceBindFlags::ShaderResource | */ ResourceBindFlags::DepthStencil
-    );
+    mDepthTexture = mpDevice->createTexture2D(mWidth, mHeight, ResourceFormat::D32Float, 1, 1, nullptr, ResourceBindFlags::DepthStencil);
 }
 
 void GBuffer::initializeGraphicStates()
@@ -195,12 +136,11 @@ void GBuffer::compilePrograms()
         // For optional I/O resources, set 'is_valid_<name>' defines to inform the program of which ones it can access.
         // TODO: This should be moved to a more general mechanism using Slang.
         // mGBufferPass.pProgram->addDefines(getValidResourceDefines(kGBufferChannels, renderData));
-        //mGBufferPass.pProgram->addDefines(getValidResourceDefines(kGBufferExtraChannels, renderData));
+        // mGBufferPass.pProgram->addDefines(getValidResourceDefines(kGBufferExtraChannels, renderData));
 
         // Create program vars.
         mGBufferPass.pVars = ProgramVars::create(mpDevice, mGBufferPass.pProgram.get());
         mGBufferPass.pState->setFbo(mpFbo); // Sets the viewport
-
     }
 }
 
