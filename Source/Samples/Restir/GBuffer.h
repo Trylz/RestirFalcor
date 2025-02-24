@@ -18,8 +18,8 @@ public:
     inline const ref<Texture>& getMaterialDataTexture() const { return mMaterialDataTexture; }
 
 private:
-    ref<GBufferRaster> mpNativeGBufferPass;
-    ref<Falcor::RenderData> mpRenderData;
+    void createTextures(ref<Device> pDevice, uint32_t width, uint32_t height);
+    void initializeGraphicStates(ref<Device> pDevice);
 
     ref<Texture> mPositionWsTexture;
     ref<Texture> mNormalWsTexture;
@@ -29,7 +29,22 @@ private:
     ref<Texture> mTextureGradientsTexture;
     ref<Texture> mMotionVectorTexture;
     ref<Texture> mMaterialDataTexture;
-
     ref<Texture> mDepthTexture;
+
+    ref<Fbo> mpFbo;
+
+    struct
+    {
+        ref<GraphicsState> pState;
+        ref<Program> pProgram;
+        ref<ProgramVars> pVars;
+    } mDepthPass;
+
+    struct
+    {
+        ref<GraphicsState> pState;
+        ref<Program> pProgram;
+        ref<ProgramVars> pVars;
+    } mGBufferPass;
 };
 } // namespace Restir
