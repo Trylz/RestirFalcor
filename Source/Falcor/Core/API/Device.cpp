@@ -426,12 +426,10 @@ Device::Device(const Desc& desc) : mDesc(desc)
 {
     if (mDesc.enableAftermath)
     {
-#if FALCOR_HAS_AFTERMATH
-        // Aftermath is incompatible with debug layers, so lets disable them.
-        mDesc.enableDebugLayer = false;
-        enableAftermath();
+#if defined(_DEBUG)
+        mDesc.enableDebugLayer = true;
 #else
-        logWarning("Falcor was compiled without Aftermath support. Aftermath is disabled");
+        mDesc.enableDebugLayer = false;
 #endif
     }
 
