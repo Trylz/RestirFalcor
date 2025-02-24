@@ -15,6 +15,7 @@ target_sources(Restir PRIVATE
 	TemporalFiltering.cpp
 	Visibility.cpp
 
+    DepthPass.slang
     GBuffer.slang
     RIS.slang
     TemporalFiltering.slang

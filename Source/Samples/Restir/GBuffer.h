@@ -22,6 +22,7 @@ public:
 private:
     void createTextures(ref<Device> pDevice, uint32_t width, uint32_t height);
     void initializeGraphicStates(ref<Device> pDevice);
+    void compilePrograms();
 
     uint32_t mWidth;
     uint32_t mHeight;

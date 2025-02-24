@@ -159,6 +159,78 @@ RenderPassReflection GBuffer::reflect(const CompileData& compileData)
     return reflector;
 }
 
+void GBuffer::compilePrograms()
+{
+    // Depth pass..
+    {
+        if (!mDepthPass.pProgram)
+        {
+            ProgramDesc desc;
+            desc.addShaderModules(mpScene->getShaderModules());
+            desc.addShaderLibrary(kDepthPassProgramFile).vsEntry("vsMain").psEntry("psMain");
+            desc.addTypeConformances(mpScene->getTypeConformances());
+
+            mDepthPass.pProgram = Program::create(mpDevice, desc, mpScene->getSceneDefines());
+            mDepthPass.pState->setProgram(mDepthPass.pProgram);
+        }
+
+        // Set program defines.
+        mDepthPass.pState->getProgram()->addDefine("USE_ALPHA_TEST", mUseAlphaTest ? "1" : "0");
+
+        // Create program vars.
+        if (!mDepthPass.pVars)
+            mDepthPass.pVars = ProgramVars::create(mpDevice, mDepthPass.pProgram.get());
+
+        mpFbo->attachDepthStencilTarget(pDepth);
+        mDepthPass.pState->setFbo(mpFbo);
+
+        mpScene->rasterize(pRenderContext, mDepthPass.pState.get(), mDepthPass.pVars.get(), cullMode);
+    }
+
+    // GBuffer pass.
+    {
+        // Create GBuffer pass program.
+        if (!mGBufferPass.pProgram)
+        {
+            ProgramDesc desc;
+            desc.addShaderModules(mpScene->getShaderModules());
+            desc.addShaderLibrary(kGBufferPassProgramFile).vsEntry("vsMain").psEntry("psMain");
+            desc.addTypeConformances(mpScene->getTypeConformances());
+
+            mGBufferPass.pProgram = Program::create(mpDevice, desc, mpScene->getSceneDefines());
+            mGBufferPass.pState->setProgram(mGBufferPass.pProgram);
+        }
+
+        // Set program defines.
+        mGBufferPass.pProgram->addDefine("ADJUST_SHADING_NORMALS", mAdjustShadingNormals ? "1" : "0");
+        mGBufferPass.pProgram->addDefine("USE_ALPHA_TEST", mUseAlphaTest ? "1" : "0");
+
+        // For optional I/O resources, set 'is_valid_<name>' defines to inform the program of which ones it can access.
+        // TODO: This should be moved to a more general mechanism using Slang.
+        mGBufferPass.pProgram->addDefines(getValidResourceDefines(kGBufferChannels, renderData));
+        mGBufferPass.pProgram->addDefines(getValidResourceDefines(kGBufferExtraChannels, renderData));
+
+        // Create program vars.
+        if (!mGBufferPass.pVars)
+            mGBufferPass.pVars = ProgramVars::create(mpDevice, mGBufferPass.pProgram.get());
+
+        auto var = mGBufferPass.pVars->getRootVar();
+
+        // Bind extra channels as UAV buffers.
+        for (const auto& channel : kGBufferExtraChannels)
+        {
+            ref<Texture> pTex = getOutput(renderData, channel.name);
+            var[channel.texname] = pTex;
+        }
+
+        var["PerFrameCB"]["gFrameDim"] = mFrameDim;
+        mGBufferPass.pState->setFbo(mpFbo); // Sets the viewport
+
+        // Rasterize the scene.
+        mpScene->rasterize(pRenderContext, mGBufferPass.pState.get(), mGBufferPass.pVars.get(), cullMode);
+    }
+}
+
 void GBuffer::render(RenderContext* pRenderContext)
 {
 
