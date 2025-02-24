@@ -32,5 +32,7 @@ private:
 
     ref<Program> mpRaytraceProgram;
     ref<RtProgramVars> mpRtVars;
+
+    uint32_t mSampleIndex = 0u;
 };
 } // namespace Restir

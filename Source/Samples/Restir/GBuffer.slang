@@ -11,6 +11,7 @@ RWTexture2D<float4> gMotionVector;
 cbuffer PerFrameCB
 {
     float2 viewportDims;
+    uint sampleIndex;
 };
 
 struct PrimaryRayData
@@ -52,6 +53,12 @@ void primaryClosestHit(inout PrimaryRayData hitData, BuiltInTriangleIntersection
     uint materialID = gScene.getMaterialID(instanceID);
     ShadingData sd = gScene.materials.prepareShadingData(v, materialID, -rayDirW);
 
+    // Create material instance and query its properties.
+    let lod = ExplicitLodTextureSampler(0.f);
+    let mi = gScene.materials.getMaterialInstance(sd, lod);
+    let bsdfProperties = mi.getProperties(sd);
+
+
     // The launch index.
     const uint2 launchIndex = DispatchRaysIndex().xy;
 
@@ -61,17 +68,17 @@ void primaryClosestHit(inout PrimaryRayData hitData, BuiltInTriangleIntersection
     }
     // Write the ws normal.
     {
-        gNormalWs[launchIndex] = float4(sd.N, 1.f);
+        gNormalWs[launchIndex] = float4(sd.faceN, 1.f);
     }
 
     // Write the albedo.
     {
-        gAlbedo[launchIndex] = float4(sd.diffuse, 1.f);
+        gAlbedo[launchIndex] = float4(bsdfProperties.diffuseReflectionAlbedo, 1.f);
     }
 
     // Write the specular.
     {
-        gSpecular[launchIndex] = float4(sd.specular, sd.roughness);
+        gSpecular[launchIndex] = float4(bsdfProperties.specularReflectionAlbedo, bsdfProperties.roughness);
     }
 
     // Write the velocity TODO.
@@ -89,9 +96,7 @@ void primaryAnyHit(inout PrimaryRayData rayData, BuiltInTriangleIntersectionAttr
 void rayGen()
 {
     uint3 launchIndex = DispatchRaysIndex();
-    TinyUniformSampleGenerator sg = TinyUniformSampleGenerator(launchIndex.xy, sampleIndex);
-
-    float2 u = sampleNext2D(sg);// Yann maybe (0.5f, 0.5f)?
+    const RayDesc ray = = gScene.camera.computeRayPinhole(launchIndex.xy, viewportDims).toRayDesc();
 
     PrimaryRayData hitData;
     TraceRay(gScene.rtAccel, 0 /*rayFlags*/, 0xFF, 0 /* ray index*/, rayTypeCount, 0, ray, hitData);

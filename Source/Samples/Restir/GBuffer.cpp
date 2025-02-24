@@ -83,7 +83,10 @@ void GBuffer::render(RenderContext* pRenderContext, ref<Scene> pScene)
     }
 
     auto var = mpRtVars->getRootVar();
+
     var["PerFrameCB"]["viewportDims"] = float2(mWidth, mHeight);
+    var["PerFrameCB"]["sampleIndex"] = mSampleIndex++;
+
     var["gPositionWs"] = mPositionWsTexture;
     var["gNormalWs"] = mNormalWsTexture;
     var["gAlbedo"] = mAlbedoTexture;
