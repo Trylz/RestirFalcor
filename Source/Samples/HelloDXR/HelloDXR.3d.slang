@@ -48,7 +48,8 @@ float4 psMain(VSOut vsOut, uint triangleIndex: SV_PrimitiveID) : SV_TARGET
 
     float3 color = mi.getProperties(sd).emission;
 
-    uint3 launchIndex = DispatchRaysIndex();
+    //uint3 launchIndex = DispatchRaysIndex();
+    uint3 launchIndex = uint3(0, 0, 0);
     TinyUniformSampleGenerator sg = TinyUniformSampleGenerator(launchIndex.xy, 0);
 
     // Direct lighting from analytic light sources
