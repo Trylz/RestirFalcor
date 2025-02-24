@@ -37,6 +37,10 @@ void GBuffer::createTextures()
         mWidth, mHeight, ResourceFormat::RGBA32Float, 1, 1, nullptr, ResourceBindFlags::ShaderResource | ResourceBindFlags::UnorderedAccess
     );
 
+    mSpecularTexture = mpDevice->createTexture2D(
+        mWidth, mHeight, ResourceFormat::RGBA32Float, 1, 1, nullptr, ResourceBindFlags::ShaderResource | ResourceBindFlags::UnorderedAccess
+    );
+
     mMotionVectorTexture = mpDevice->createTexture2D(
         mWidth, mHeight, ResourceFormat::RGBA32Float, 1, 1, nullptr, ResourceBindFlags::ShaderResource | ResourceBindFlags::UnorderedAccess
     );
@@ -97,6 +101,7 @@ void GBuffer::render(RenderContext* pRenderContext, ref<Scene> pScene)
     var["gPositionWs"] = mPositionWsTexture;
     var["gNormalWs"] = mNormalWsTexture;
     var["gAlbedo"] = mAlbedoTexture;
+    var["gSpecular"] = mSpecularTexture;
     var["gMotionVector"] = mMotionVectorTexture;
 
     mpScene->raytrace(pRenderContext, mpRaytraceProgram.get(), mpRtVars, uint3(mWidth, mHeight, 1));

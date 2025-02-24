@@ -5,6 +5,7 @@ import Rendering.Lights.LightHelpers;
 RWTexture2D<float4> gPositionWs;
 RWTexture2D<float4> gNormalWs;
 RWTexture2D<float4> gAlbedo;
+RWTexture2D<float4> gSpecular;
 RWTexture2D<float4> gMotionVector;
 
 cbuffer PerFrameCB
@@ -63,15 +64,17 @@ void primaryClosestHit(inout PrimaryRayData hitData, BuiltInTriangleIntersection
         gNormalWs[launchIndex] = float4(sd.faceN, 1.f);
     }
 
-    // Write the Albedo TODO
+    // Write the albedo.
     {
-        let lod = ExplicitLodTextureSampler(0.f);
-        let mi = gScene.materials.getMaterialInstance(sd, lod);
-        let bsdfProperties = mi.getProperties(sd);
-
-        gPositionWs[launchIndex] = float4(sd.posW, 1.f);
+        gAlbedo[launchIndex] = float4(sd.diffuse, 1.f);
     }
-    // Write the velocity TODO
+
+    // Write the specular.
+    {
+        gSpecular[launchIndex] = float4(sd.specular, sd.roughness);
+    }
+
+    // Write the velocity TODO.
     {
         gPositionWs[launchIndex] = float4(0.0f, 0.0f, 0.0f, 0.0f);
     }

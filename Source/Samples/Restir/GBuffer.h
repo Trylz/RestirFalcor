@@ -8,11 +8,10 @@ public:
     GBuffer(ref<Device> pDevice, uint32_t width, uint32_t height);
     void render(RenderContext* pRenderContext, ref<Scene> pScene);
 
-    // RenderPassReflection reflect(const CompileData& compileData) override;
-
     inline const ref<Texture>& getPositionWsTexture() const { return mPositionWsTexture; }
     inline const ref<Texture>& getNormalWsTexture() const { return mNormalWsTexture; }
     inline const ref<Texture>& getAlbedoTexture() const { return mAlbedoTexture; }
+    inline const ref<Texture>& getSpecularTexture() const { return mSpecularTexture; }
     inline const ref<Texture>& getMotionVectorTexture() const { return mMotionVectorTexture; }
 
 private:
@@ -28,6 +27,7 @@ private:
     ref<Texture> mPositionWsTexture;
     ref<Texture> mNormalWsTexture;
     ref<Texture> mAlbedoTexture;
+    ref<Texture> mSpecularTexture;
     ref<Texture> mMotionVectorTexture;
 
     ref<Program> mpRaytraceProgram;
