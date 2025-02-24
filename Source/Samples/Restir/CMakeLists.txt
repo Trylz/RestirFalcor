@@ -17,7 +17,6 @@ target_sources(Restir PRIVATE
 
     DepthPass.slang
     GBuffer.slang
-    GBufferHelpers.slang
     RIS.slang
     TemporalFiltering.slang
     Visibility.slang
