@@ -33,13 +33,6 @@ void RestirApp::onResize(uint32_t width, uint32_t height)
         float aspectRatio = (w / h);
         mpCamera->setAspectRatio(aspectRatio);
     }
-
-    /*
-            mpRtOut = getDevice()->createTexture2D(
-                width, height, ResourceFormat::RGBA16Float, 1, 1, nullptr, ResourceBindFlags::UnorderedAccess |
-           ResourceBindFlags::ShaderResource
-            );
-        */
 }
 
 void RestirApp::onFrameRender(RenderContext* pRenderContext, const ref<Fbo>& pTargetFbo)
@@ -111,8 +104,6 @@ void RestirApp::loadScene(const std::filesystem::path& path, const Fbo* pTargetF
     mpCamera->setAspectRatio((float)pTargetFbo->getWidth() / (float)pTargetFbo->getHeight());
 
     // Create the passes.
-    ref<Device> pDevice, ref<Scene> pScene, uint32_t width, uint32_t height;
-
     mpGufferPass.reset(new Restir::GBuffer(getDevice(), mpScene, pTargetFbo->getWidth(), pTargetFbo->getHeight()));
 }
 
@@ -135,12 +126,12 @@ void RestirApp::setPerFrameVars(const Fbo* pTargetFbo)
 void RestirApp::render(RenderContext* pRenderContext, const ref<Fbo>& pTargetFbo)
 {
     FALCOR_ASSERT(mpScene);
-    FALCOR_PROFILE(pRenderContext, "renderRT");
+    FALCOR_PROFILE(pRenderContext, "RestirApp::render");
 
     setPerFrameVars(pTargetFbo.get());
 
     mpGufferPass->render(pRenderContext);
-    pRenderContext->blit(mpGufferPass->getPositionWsTexture()->getSRV(), pTargetFbo->getRenderTargetView(0));
+    pRenderContext->blit(mpGufferPass->getNormalWsTexture()->getSRV(), pTargetFbo->getRenderTargetView(0));
 }
 
 int runMain(int argc, char** argv)
