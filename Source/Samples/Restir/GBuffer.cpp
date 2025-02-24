@@ -211,12 +211,14 @@ void GBuffer::render(RenderContext* pRenderContext)
 
     // Depth pass.
     {
+        FALCOR_PROFILE(pRenderContext, "GBuffer::render Depth");
         pRenderContext->clearDsv(mDepthTexture->getDSV().get(), 1.f, 0);
         mpScene->rasterize(pRenderContext, mDepthPass.pState.get(), mDepthPass.pVars.get(), cullMode);
     }
 
     // GBuffer pass.
     {
+        FALCOR_PROFILE(pRenderContext, "GBuffer::render Gbuffer");
         mpFbo->attachColorTarget(mPositionWsTexture, 0u);
         mpFbo->attachColorTarget(mNormalWsTexture, 1u);
         mpFbo->attachColorTarget(mTangentWsTexture, 2u);

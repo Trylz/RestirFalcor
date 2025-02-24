@@ -24,11 +24,11 @@ private:
     void initializeGraphicStates();
     void compilePrograms();
 
-    uint32_t mWidth;
-    uint32_t mHeight;
-
     ref<Device> mpDevice;
     ref<Scene> mpScene;
+
+    uint32_t mWidth;
+    uint32_t mHeight;
 
     ref<Texture> mPositionWsTexture;
     ref<Texture> mNormalWsTexture;
