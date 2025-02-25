@@ -131,7 +131,7 @@ void RestirApp::render(RenderContext* pRenderContext, const ref<Fbo>& pTargetFbo
     setPerFrameVars(pTargetFbo.get());
 
     mpGufferPass->render(pRenderContext, mpScene);
-    pRenderContext->blit(mpGufferPass->getNormalWsTexture()->getSRV(), pTargetFbo->getRenderTargetView(0));
+    pRenderContext->blit(mpGufferPass->getAlbedoTexture()->getSRV(), pTargetFbo->getRenderTargetView(0));
 }
 
 int runMain(int argc, char** argv)
