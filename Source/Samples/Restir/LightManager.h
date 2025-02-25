@@ -7,8 +7,8 @@ namespace Restir
 struct Light
 {
     Falcor::float3 mWsPosition;
+    Falcor::float3 mRadiance;
     float mRadius;
-    float mRadiance;
     float mfallOff;
 };
 

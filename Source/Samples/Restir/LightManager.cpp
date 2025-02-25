@@ -5,20 +5,13 @@ LightManager::LightManager(Falcor::ref<Falcor::Device> pDevice, Falcor::ref<Falc
 {
     // Create a light at center of scene
     Light light;
-    light.mRadiance = ;
-    light.mRadiance = ;
-    light.mRadiance = ;
-    light.mRadiance = ;
+    light.mWsPosition = pScene->getSceneBounds().center();
+    light.mRadiance = Falcor::float3(0.8f, 0.8f, 0.8f) * 4.0f;
+    light.mRadius = 0.0001f;
+    light.mfallOff = (light.mRadius * light.mRadius) * std::exp(1.0f / 0.0001f);
+    mLights.push_back(light);
 
-    Falcor::float3 mWsPosition;
-    float mRadius;
-    float mRadiance;
-    float mfallOff;
-
-    Falcor::AABB sceneBounds = pScene->getSceneBounds();
-
-    const Falcor::float3 minPoint = ;
-    sceneBounds.minPoint
+    // Create GPU buffer
 }
 
 } // namespace Restir
