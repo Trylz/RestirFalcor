@@ -26,7 +26,4 @@ private:
 
     ref<Scene> mpScene;
     ref<Camera> mpCamera;
-
-    // The restir passes.
-    ref<Restir::GBuffer> mpGufferPass;
 };

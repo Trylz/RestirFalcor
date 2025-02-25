@@ -1,8 +1,10 @@
+#pragma once
 #include "../RenderPasses/GBuffer/GBuffer/GBufferRaster.h"
+#include "Singleton.h"
 
 namespace Restir
 {
-class GBuffer /*: public RenderPass*/
+class GBuffer 
 {
 public:
     GBuffer(ref<Device> pDevice, uint32_t width, uint32_t height);
@@ -35,4 +37,7 @@ private:
 
     uint32_t mSampleIndex = 0u;
 };
+
+using GBufferSingleton = Singleton<GBuffer>;
+
 } // namespace Restir

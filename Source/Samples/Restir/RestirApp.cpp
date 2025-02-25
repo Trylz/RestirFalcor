@@ -105,12 +105,8 @@ void RestirApp::loadScene(const std::filesystem::path& path, const Fbo* pTargetF
     mpCamera->setDepthRange(nearZ, farZ);
     mpCamera->setAspectRatio((float)pTargetFbo->getWidth() / (float)pTargetFbo->getHeight());
 
-    // Create the passes.
-    mpGufferPass.reset(new Restir::GBuffer(getDevice(), pTargetFbo->getWidth(), pTargetFbo->getHeight()));
-
-
-
     // Create the singletons.
+    Restir::GBufferSingleton::create();
     Restir::LightManagerSingleton::create();
     Restir::ReservoirManagerSingleton::create();
 }
