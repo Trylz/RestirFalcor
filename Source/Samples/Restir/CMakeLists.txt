@@ -4,6 +4,7 @@ target_sources(Restir PRIVATE
 	Denoising.h
     GBuffer.h
     LightManager.h
+    ReservoirManager.h
     RestirApp.h
     RIS.h
     Singleton.h
@@ -14,6 +15,7 @@ target_sources(Restir PRIVATE
     FloatRandomNumberGenerator.h
     GBuffer.cpp
     LightManager.cpp
+    ReservoirManager.cpp
 	RestirApp.cpp
 	RIS.cpp
 	TemporalFiltering.cpp
