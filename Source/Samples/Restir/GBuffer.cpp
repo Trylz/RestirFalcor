@@ -73,16 +73,13 @@ void GBuffer::render(RenderContext* pRenderContext, ref<Scene> pScene)
         compilePrograms();
     }
 
-    auto var = mpRtVars->getRootVar();
+    // Clear depth
+    pRenderContext->clearDsv(mDepthTexture->getDSV().get(), 1.f, 0);
 
-    var["PerFrameCB"]["viewportDims"] = float2(mWidth, mHeight);
-    var["PerFrameCB"]["sampleIndex"] = mSampleIndex++;
+    // Attacxh the render targets
+    mpFbo->attachColorTarget(pTex, uint32_t(i));
 
-    var["gPositionWs"] = mPositionWsTexture;
-    var["gNormalWs"] = mNormalWsTexture;
-    var["gAlbedo"] = mAlbedoTexture;
-    var["gSpecular"] = mSpecularTexture;
-    var["gMotionVector"] = mMotionVectorTexture;
+
 
     mpScene->raytrace(pRenderContext, mpRaytraceProgram.get(), mpRtVars, uint3(mWidth, mHeight, 1));
 }
