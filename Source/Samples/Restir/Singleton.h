@@ -1,0 +1,36 @@
+#pragma once
+
+#include "Falcor.h"
+
+namespace Restir
+{
+template<typename InstanceType, typename... ConstructArgs>
+class Singleton
+{
+public:
+    Singleton() = delete;
+
+    static InstanceType* create(ConstructArgs... args)
+    {
+        FMT_ASSERT(m_instance == nullptr, "");
+        m_instance = new InstanceType(args...);
+
+        return m_instance;
+    }
+
+    static void destroy()
+    {
+        FMT_ASSERT(m_instance != nullptr, "");
+        delete m_instance;
+        m_instance = nullptr;
+    }
+
+    static InstanceType* instance() { return m_instance; }
+
+private:
+    static InstanceType* m_instance;
+};
+
+template<typename InstanceType, typename... ConstructArgs>
+InstanceType* Singleton<InstanceType, ConstructArgs...>::m_instance = nullptr;
+} // namespace Restir
