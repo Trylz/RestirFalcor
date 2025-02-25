@@ -21,6 +21,9 @@ struct LightManager
 private:
     std::vector<Light> mLights;
     Falcor::ref<Falcor::Buffer> mGpuLightBuffer;
+
+    std::vector<float> mLightProbabilities;
+    Falcor::ref<Falcor::Buffer> mGpuLightProbabilityBuffer;
 };
 
 using EntityDatabaseSingleton = Singleton<LightManager>;
