@@ -16,10 +16,12 @@ cbuffer PerFrameCB
 
 struct PrimaryRayData
 {
+    bool dummy;
 };
 
 struct ShadowRayData
 {
+    bool dummy;
 };
 
 [shader("miss")]
