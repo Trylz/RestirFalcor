@@ -1,63 +1,43 @@
-#include "LightManager.h"
+#include "ReservoirManager.h"
 namespace Restir
 {
-float luma(Falcor::float3 v)
-{
-    return 0.2126f * v.r + 0.7152f * v.g + 0.0722f * v.b;
-}
 
-LightManager::LightManager(Falcor::ref<Falcor::Device> pDevice, Falcor::ref<Falcor::Scene> pScene)
+ReservoirManager::ReservoirManager(Falcor::ref<Falcor::Device> pDevice, uint32_t width, uint32_t height)
 {
     //------------------------------------------------------------------------------------------------------------
-    //	Create a light at center of scene
+    //	Init reservoirs
     //------------------------------------------------------------------------------------------------------------
-    Light light;
-    light.mWsPosition = pScene->getSceneBounds().center();
-    light.mRadiance = Falcor::float3(0.8f, 0.8f, 0.8f) * 4.0f;
-    light.mRadius = 0.0001f;
-    light.mfallOff = std::min((light.mRadius * light.mRadius) * std::exp(1.0f / 0.0001f), 1.0f);
-    mLights.push_back(light);
+    const uint32_t nbPixels = width * height;
+    const uint32_t nbReservoirs = nbPixels * nbReservoirPerPixel;
+    std::vector<RestirReservoir> reservoirs(nbReservoirs);
 
     //------------------------------------------------------------------------------------------------------------
-    //	Compute light probabilities
-    //------------------------------------------------------------------------------------------------------------
-    mLightProbabilities.reserve(mLights.size());
-
-    float totalWeight = 0.0f;
-    for (const Light& light : mLights)
-    {
-        const float lightLuma = luma(light.mRadiance);
-
-        mLightProbabilities.push_back(lightLuma);
-        totalWeight += lightLuma;
-    }
-
-    for (float& prob : mLightProbabilities)
-        prob /= totalWeight;
-
-    //------------------------------------------------------------------------------------------------------------
-    //	Create lights gpu buffer
+    //	Create GPU reservoirs
     //------------------------------------------------------------------------------------------------------------
 
-    pDevice->createStructuredBuffer(
-        sizeof(Light),
-        mLights.size(),
-        Falcor::ResourceBindFlags::ShaderResource, Falcor::MemoryType::DeviceLocal, mLights.data(),
-        false
-    );
-
-    //------------------------------------------------------------------------------------------------------------
-    //	Create light probalities gpu buffer
-    //------------------------------------------------------------------------------------------------------------
-
-    pDevice->createStructuredBuffer(
-        sizeof(float),
-        mLightProbabilities.size(),
-        Falcor::ResourceBindFlags::ShaderResource,
+    mReservoirBuffer1 = pDevice->createStructuredBuffer(
+        sizeof(RestirReservoir),
+        reservoirs.size(),
+        Falcor::ResourceBindFlags::ShaderResource | Falcor::ResourceBindFlags::UnorderedAccess,
         Falcor::MemoryType::DeviceLocal,
-        mLightProbabilities.data(),
+        reservoirs.data(),
         false
     );
+
+    mReservoirBuffer2 = pDevice->createStructuredBuffer(
+        sizeof(RestirReservoir),
+        reservoirs.size(),
+        Falcor::ResourceBindFlags::ShaderResource | Falcor::ResourceBindFlags::UnorderedAccess,
+        Falcor::MemoryType::DeviceLocal,
+        reservoirs.data(),
+        false
+    );
+
+    //------------------------------------------------------------------------------------------------------------
+    //	Init current and previous frame reservoirs
+    //------------------------------------------------------------------------------------------------------------
+    mCurrentFrameReservoir = &mReservoirBuffer1;
+    mPreviousFrameReservoir = &mReservoirBuffer2;
 }
 
 } // namespace Restir

@@ -30,5 +30,5 @@ private:
     Falcor::ref<Falcor::Buffer> mGpuLightProbabilityBuffer;
 };
 
-using EntityDatabaseSingleton = Singleton<LightManager>;
+using LightManagerSingleton = Singleton<LightManager>;
 } // namespace Restir

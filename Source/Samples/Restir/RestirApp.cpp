@@ -1,5 +1,7 @@
 
 #include "RestirApp.h"
+#include "LightManager.h"
+#include "ReservoirManager.h"
 #include "Utils/Math/FalcorMath.h"
 #include "Utils/UI/TextRenderer.h"
 
@@ -105,6 +107,12 @@ void RestirApp::loadScene(const std::filesystem::path& path, const Fbo* pTargetF
 
     // Create the passes.
     mpGufferPass.reset(new Restir::GBuffer(getDevice(), pTargetFbo->getWidth(), pTargetFbo->getHeight()));
+
+
+
+    // Create the singletons.
+    Restir::LightManagerSingleton::create();
+    Restir::ReservoirManagerSingleton::create();
 }
 
 void RestirApp::setPerFrameVars(const Fbo* pTargetFbo)

@@ -39,7 +39,7 @@ LightManager::LightManager(Falcor::ref<Falcor::Device> pDevice, Falcor::ref<Falc
     //	Create lights gpu buffer
     //------------------------------------------------------------------------------------------------------------
 
-    pDevice->createStructuredBuffer(
+    mGpuLightBuffer = pDevice->createStructuredBuffer(
         sizeof(Light),
         mLights.size(),
         Falcor::ResourceBindFlags::ShaderResource, Falcor::MemoryType::DeviceLocal, mLights.data(),
@@ -50,7 +50,7 @@ LightManager::LightManager(Falcor::ref<Falcor::Device> pDevice, Falcor::ref<Falc
     //	Create light probalities gpu buffer
     //------------------------------------------------------------------------------------------------------------
 
-    pDevice->createStructuredBuffer(
+    mGpuLightProbabilityBuffer = pDevice->createStructuredBuffer(
         sizeof(float),
         mLightProbabilities.size(),
         Falcor::ResourceBindFlags::ShaderResource,

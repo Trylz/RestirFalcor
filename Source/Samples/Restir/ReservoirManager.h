@@ -4,31 +4,39 @@
 
 namespace Restir
 {
-struct Light
+struct RestirSample
 {
-    Falcor::float3 mWsPosition;
-    Falcor::float3 mRadiance;
-    float mRadius;
-    float mfallOff;
+    Falcor::float3 geometryPos;
+    Falcor::float3 lightSamplePosition;
+    Falcor::float3 incomingRadiance;
 };
 
-struct LightManager
+struct RestirReservoir
 {
-    LightManager(Falcor::ref<Falcor::Device> pDevice, Falcor::ref<Falcor::Scene> pScene);
+    RestirSample m_y;
+    float m_Wsum = 0.0f;
+    uint32_t m_M = 0;
+    float m_W = 0.0f;
+};
 
-    inline const std::vector<Light>& getLights() const { return mLights; }
-    inline const Falcor::ref<Falcor::Buffer>& getLightGpuBuffer() const { return mGpuLightBuffer; }
+struct ReservoirManager
+{
+    ReservoirManager(Falcor::ref<Falcor::Device> pDevice, uint32_t width, uint32_t height);
 
-    inline const std::vector<float>& getLightProbabilities() const { return mLightProbabilities; }
-    inline const Falcor::ref<Falcor::Buffer>& getLightProbabilitiesGpuBuffer() const { return mGpuLightProbabilityBuffer; }
+    inline const Falcor::ref<Falcor::Buffer>& getCurrentFrameReservoirBuffer() const { return *mCurrentFrameReservoir; }
+    inline const Falcor::ref<Falcor::Buffer>& getPreviousFrameReservoirBuffer() const { return *mPreviousFrameReservoir; }
+
+    inline void setNextFrame() { std::swap(mCurrentFrameReservoir, mPreviousFrameReservoir);}
+
+    static const uint32_t nbReservoirPerPixel = 4;
 
 private:
-    std::vector<Light> mLights;
-    Falcor::ref<Falcor::Buffer> mGpuLightBuffer;
+    Falcor::ref<Falcor::Buffer> mReservoirBuffer1;
+    Falcor::ref<Falcor::Buffer> mReservoirBuffer2;
 
-    std::vector<float> mLightProbabilities;
-    Falcor::ref<Falcor::Buffer> mGpuLightProbabilityBuffer;
+    Falcor::ref<Falcor::Buffer>* mCurrentFrameReservoir;
+    Falcor::ref<Falcor::Buffer>* mPreviousFrameReservoir;
 };
 
-using EntityDatabaseSingleton = Singleton<LightManager>;
+using ReservoirManagerSingleton = Singleton<ReservoirManager>;
 } // namespace Restir
