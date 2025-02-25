@@ -31,6 +31,7 @@ private:
     ref<Texture> mAlbedoTexture;
     ref<Texture> mSpecularTexture;
     ref<Texture> mMotionVectorTexture;
+    ref<Texture> mDepthTexture;
 
     ref<RasterPass> mpRasterPass;
 };
