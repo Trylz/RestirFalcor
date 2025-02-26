@@ -59,14 +59,12 @@ void GBuffer::compilePrograms()
 
     rtProgDesc.setMaxPayloadSize(24);
 
-    ref<RtBindingTable> sbt = RtBindingTable::create(2, 2, mpScene->getGeometryCount());
+    ref<RtBindingTable> sbt = RtBindingTable::create(1, 1, mpScene->getGeometryCount());
     sbt->setRayGen(rtProgDesc.addRayGen("rayGen"));
     sbt->setMiss(0, rtProgDesc.addMiss("primaryMiss"));
-    sbt->setMiss(1, rtProgDesc.addMiss("shadowMiss"));
     auto primary = rtProgDesc.addHitGroup("primaryClosestHit", "primaryAnyHit");
-    auto shadow = rtProgDesc.addHitGroup("", "shadowAnyHit");
+
     sbt->setHitGroup(0, mpScene->getGeometryIDs(Scene::GeometryType::TriangleMesh), primary);
-    sbt->setHitGroup(1, mpScene->getGeometryIDs(Scene::GeometryType::TriangleMesh), shadow);
 
     mpRaytraceProgram = Program::create(mpDevice, rtProgDesc, defines);
     mpRtVars = RtProgramVars::create(mpDevice, mpRaytraceProgram, sbt);

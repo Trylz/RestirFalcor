@@ -19,21 +19,6 @@ struct PrimaryRayData
     bool dummy;
 };
 
-struct ShadowRayData
-{
-    bool dummy;
-};
-
-[shader("miss")]
-void shadowMiss(inout ShadowRayData hitData)
-{
-}
-
-[shader("anyhit")]
-void shadowAnyHit(inout ShadowRayData hitData, BuiltInTriangleIntersectionAttributes attribs)
-{
-}
-
 [shader("miss")]
 void primaryMiss(inout PrimaryRayData hitData)
 {
@@ -59,7 +44,6 @@ void primaryClosestHit(inout PrimaryRayData hitData, BuiltInTriangleIntersection
     let lod = ExplicitLodTextureSampler(0.f);
     let mi = gScene.materials.getMaterialInstance(sd, lod);
     let bsdfProperties = mi.getProperties(sd);
-
 
     // The launch index.
     const uint2 launchIndex = DispatchRaysIndex().xy;
