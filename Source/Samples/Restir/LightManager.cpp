@@ -1,4 +1,5 @@
 #include "LightManager.h"
+
 namespace Restir
 {
 float luma(Falcor::float3 v)

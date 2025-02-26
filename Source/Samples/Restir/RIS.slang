@@ -7,7 +7,7 @@ import Utils.Sampling.TinyUniformSampleGenerator;
 cbuffer PerFrameCB
 {
     uint2 viewportDims;
-    float2 cameraPositionWs;
+    float3 cameraPositionWs;
     uint sampleIndex;
     uint nbReservoirPerPixel;
     uint lightCount;
@@ -149,7 +149,7 @@ RestirReservoir RIS(uint2 pixel)
 }
 
 [numthreads(16, 16, 1)]
-void EntyPoint(uint3 threadId: SV_DispatchThreadID)
+void EntryPoint(uint3 threadId: SV_DispatchThreadID)
 {
     if (any(threadId.xy > viewportDims))
         return;
