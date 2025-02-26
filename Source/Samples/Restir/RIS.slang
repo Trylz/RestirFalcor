@@ -1,3 +1,4 @@
+#include "BRDF.slangh"
 #include "Light.slangh"
 #include "Reservoir.slangh"
 
@@ -6,6 +7,7 @@ import Utils.Sampling.TinyUniformSampleGenerator;
 cbuffer PerFrameCB
 {
     uint2 viewportDims;
+    float2 cameraPositionWs;
     uint sampleIndex;
     uint nbReservoirPerPixel;
     uint lightCount;
@@ -44,29 +46,31 @@ inline float3 uniformSphericalSample(float r1, float r2)
 
 SampleToLight generateSampleTolight(float3 P, RestirLight light, inout TinyUniformSampleGenerator rng)
 {
-		const Math::Vec3 lightToP = P - readPosition();
+	const float lightToP = P - light;
+	const float distToLight = length(lightToP);
 
-		const nbFloat32 distToLight = glm::length(lightToP);
-		if (distToLight > m_range)
-			return SampleToLight(false);
-
-		const nbFloat32 r1 = randGenerator.generateSignedNormalized();
-		const nbFloat32 r2 = randGenerator.generateUnsignedNormalized();
+	const float r1 = sampleNext1D(rng) * 2.0f - 1.0f;
+	const float r2 = sampleNext1D(rng);
 	
-		Math::Vec3 lightToSample = Math::uniformSphericalSample(r1, r2);
-		if (glm::dot(lightToP, lightToSample) / distToLight < 0.0f)
-		{
-			// Sample is on the back hemisphere. Take the opposite one.
-			lightToSample *= -1;
-		}
+	float3 lightToSample = uniformSphericalSample(r1, r2);
+	if (glm::dot(lightToP, lightToSample) / distToLight < 0.0f)
+	{
+		// Sample is on the back hemisphere. Take the opposite one.
+		lightToSample *= -1;
+	}
 
-		SampleToLight sample;
-		sample.L = -lightToP + (lightToSample * m_radius);
-		sample.length = glm::length(sample.L);
-		sample.L /= sample.length;
+	SampleToLight sample;
+	sample.L = -lightToP + (lightToSample * light.mRadius);
+	sample.length = length(sample.L);
+	sample.L /= sample.length;
 
-		sample.intensityMultiplier = m_fallOffMultiplier / (sample.length * sample.length);
-		sample.intensityMultiplier = std::min(sample.intensityMultiplier, 1.0f);
+	sample.intensityMultiplier = light.mfallOff / (sample.length * sample.length);
+	sample.intensityMultiplier = std::min(sample.intensityMultiplier, 1.0f);
+}
+
+float luma(float3 v)
+{
+    return 0.2126f * v.r + 0.7152f * v.g + 0.0722f * v.b;
 }
 
 RestirReservoir RIS(uint2 pixel)
@@ -76,69 +80,77 @@ RestirReservoir RIS(uint2 pixel)
     RestirReservoir r;
     initReservoir(r);
 
+    const float3 P = gPositionWs[pixel].xyz;
+    const float3 N = gNormalWs[pixel].xyz;
+    const float3 V = normalize(P - cameraPositionWs)
+    const float3 diffuse = gAlbedo[pixel].xyz;
+    const float3 specular = gSpecular[pixel].xyz;
+    const float roughness = gSpecular[pixel].w;
+
     for (uint i = 0; i < 32; ++i)
 	{
 		// First randomly select a light.
         const float rand = sampleNext1D(rng);
 
-		uint lightIndex =  rand * (float)(lightCount - 1.0f));
+		const uint lightIndex =  rand * (float)(lightCount - 1.0f));
         //lightIndex = min(lightIndex,lightCount - 1u);
 
-
-		// Get light entity id
-		const EntityIdentifier lightEntityId = lights[lightIndex];
-
-		// Read light from memory.
-		const auto light = Entity::EntityDatabaseSingleton::instance()->fastGetEntityRawPtr<Light::BaseLight>(lightEntityId);
-
-		if (light->getType() == Graphics::Light::LightType::Directionnal)
-			continue;//Not yet supported.
+        // Read the light
+        const RestirLight light = gLights[lightIndex];
 
 		// Generate a random sample to light
-		const auto sampleToLight = light->generateSampleToLight(rng, isectProps.P);
-		if (!sampleToLight.canProcess)
-			continue;
-
-		const nbFloat32 NoL = glm::dot(isectProps.BsdfProps.N, sampleToLight.L);
-		if (NoL <= 0.0f)
-			continue;
-
-		// Compute light final color
-		const Spectrum lightFinalColor = light->computeFinalColor();
+		const SampleToLight sampleToLight = generateSampleTolight(P, light, rng)
 
 		// Read light probability
-		const nbFloat32 px = m_restirLightProbabilities[lightIndex];
+		const float px = gLightProbabilities[lightIndex];
 
 		// Compute sample pobability. According to paper BRDF * Le * G(x) 
-		Spectrum ppxSpectrum = lightFinalColor;
+		float3 ppxSpectrum = light.mRadiance;
 		{
 			ppxSpectrum *= sampleToLight.intensityMultiplier;//G(x) without NoL
 
-			// Build the bsdf sample struture
-			Material::BaseMaterial::SampleBsdfData bsdfSample;
-			bsdfSample.L = sampleToLight.L;
-			bsdfSample.V = isectProps.V;
-			bsdfSample.NoL = NoL;
-			bsdfSample.geoProps = &isectProps.BsdfProps;
-
 			// Sample the brdf to get the scale
-			const RGBFColor sampledBrdf = material.sampleBsdf(materialColorCache, bsdfSample);
-			ppxSpectrum *= sampledBrdf;//BRDF*NoL
+			const float3 sampledBrdf = evaluateBRDF(N, sampleToLight.L, V, diffuse, specular, roughness);
+			ppxSpectrum *= sampledBrdf * max(0.0f, dot(sampleToLight.L, N));
 		}
 
 		// The sample probability.
-		const nbFloat32 ppx = luma(ppxSpectrum);
+		const float ppx = luma(ppxSpectrum);
 
 		// Build the sample.
 		RestirSample xi;
-		xi.geometryPos = isectProps.deltaP;
-		xi.lightSamplePosition = xi.geometryPos + (sampleToLight.L * sampleToLight.length);
-		xi.incomingRadiance = lightFinalColor;
+		xi.mGeometryPos = P;
+		xi.mLightSamplePosition = xi.geometryPos + (sampleToLight.L * sampleToLight.length);
+		xi.mIncomingRadiance = light.mRadiance;
 
 		// Update the reservoir with brand new sample.
-		r.update(xi, ppx / px, rng);
+        updateReservoir(r, rng, xi, ppx / px);
 	}
 
+	// Compute and set RIS global weight.
+	{
+		Spectrum ppxSpectrum = r.m_y.incomingRadiance;
+		{
+			Material::BaseMaterial::SampleBsdfData bsdfSample;
+			bsdfSample.L = glm::normalize(r.m_y.lightSamplePosition - r.m_y.geometryPos);
+			bsdfSample.V = isectProps.V;
+			bsdfSample.NoL = glm::dot(bsdfSample.L, isectProps.BsdfProps.N);
+			bsdfSample.geoProps = &isectProps.BsdfProps;
+
+			const RGBFColor sampledBrdf = material.sampleBsdf(materialColorCache, bsdfSample);
+			ppxSpectrum *= sampledBrdf;
+		}
+
+		const nbFloat32 ppx = luma(ppxSpectrum);
+		if (ppx != 0.0f)
+		{
+			r.m_W = r.m_Wsum / ((nbFloat32)r.m_M * ppx);
+		}
+		else
+		{
+			r.m_W = 0.0f;
+		}
+	}
 }
 
 [numthreads(16, 16, 1)]

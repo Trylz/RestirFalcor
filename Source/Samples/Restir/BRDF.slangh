@@ -2,5 +2,5 @@
 // TODO.
 float3 evaluateBRDF(float3 N, float3 L, float3 V, float3 diffuse, float3 specular, float3 roughness)
 {
-    return max(0.0f, dot(N, L)) * diffuse / 3.141592653f;
+    return diffuse / 3.141592653f;
 }

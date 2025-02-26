@@ -1,21 +1,30 @@
 struct RestirSample
 {
-    float3 geometryPos;
-    float3 lightSamplePosition;
-    float3 incomingRadiance;
+    float3 mGeometryPos;
+    float3 mLightSamplePosition;
+    float3 mIncomingRadiance;
 };
 
 struct RestirReservoir
 {
-    RestirSample m_y;
-    float m_Wsum;
-    uint m_M;
+    RestirSample mY;
+    float mWsum;
+    uint mM;
     float m_W;
 };
 
 void initReservoir(inout RestirReservoir r)
 {
-    r.m_Wsum = 0.0f;
-    r.m_M = 0;
+    r.mWsum = 0.0f;
+    r.mM = 0;
     r.m_W = 0.0f;
+}
+
+void updateReservoir(inout RestirReservoir r, inout TinyUniformSampleGenerator rng, RestirSample xi, float wi)
+{
+	r.mWsum += wi;
+	++r.mM;
+
+	if (r.mWsum>0.0f && sampleNext1D(rng) < wi / r.mWsum)
+		r.mY = xi;
 }
