@@ -66,6 +66,8 @@ SampleToLight generateSampleTolight(float3 P, RestirLight light, inout TinyUnifo
 
 	sample.intensityMultiplier = light.mfallOff / (sample.length * sample.length);
 	sample.intensityMultiplier = min(sample.intensityMultiplier, 1.0f);
+
+	return sample;
 }
 
 float luma(float3 v)
