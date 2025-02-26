@@ -158,6 +158,9 @@ void EntryPoint(uint3 threadId: SV_DispatchThreadID)
     if (any(threadId.xy > viewportDims))
         return;
 
+    if (gPositionWs[threadId.xy].w == 0.0f)
+        return;
+
     const uint pixelLinearIndex = threadId.y * viewportDims.x + threadId.x;
     const size_t reservoirsStart = pixelLinearIndex * nbReservoirPerPixel;
 

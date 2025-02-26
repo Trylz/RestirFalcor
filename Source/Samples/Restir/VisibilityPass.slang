@@ -1,20 +1,14 @@
 #include "Reservoir.slangh"
 
 import Scene.Raytracing;
-import Utils.Sampling.TinyUniformSampleGenerator;
 
 cbuffer PerFrameCB
 {
     uint nbReservoirPerPixel;
+    uint2 viewportDims;
 };
 
 RWStructuredBuffer<RestirReservoir> gReservoirs;
-
-
-struct PrimaryRayData
-{
-    bool dummy;
-};
 
 struct ShadowRayData
 {
@@ -33,24 +27,35 @@ void shadowAnyHit(inout ShadowRayData hitData, BuiltInTriangleIntersectionAttrib
     hitData.hit = true;
 }
 
-[shader("miss")]
-void primaryMiss(inout PrimaryRayData hitData)
-{
-}
-
-[shader("closesthit")]
-void primaryClosestHit(inout PrimaryRayData hitData, BuiltInTriangleIntersectionAttributes attribs)
-{
-}
-
-[shader("anyhit")]
-void primaryAnyHit(inout PrimaryRayData rayData, BuiltInTriangleIntersectionAttributes attribs)
-{
-}
-
 [shader("raygeneration")]
 void rayGen()
 {
+    uint3 threadId = DispatchRaysIndex();
+    if (any(threadId.xy > (uint2)viewportDims))
+        return;
+
+    const uint pixelLinearIndex = threadId.y * viewportDims.x + threadId.x;
+    const size_t reservoirsStart = pixelLinearIndex * nbReservoirPerPixel;
+
+    for (uint i = 0; i <nbReservoirPerPixel; ++i)
+    {
+        const RestirReservoir r = gReservoirs[reservoirsStart + i] ;
+
+        float3 L = r.mY.mLightSamplePosition - r.mY.mGeometryPos;
+        const float3 Llen = length(L);
+        L /= Llen;
+
+        const RayDesc shadowRay = { r.mY.mGeometryPos, 0.001f, L, Llen };
+
+        ShadowRayData rayData;
+        rayData.hit = true;
+        TraceRay(gScene.rtAccel, RAY_FLAG_ACCEPT_FIRST_HIT_AND_END_SEARCH, 0xFF, 1 /* ray index */, rayTypeCount, 1, shadowRay, rayData);
+
+        if (rayData.hit)
+            gReservoirs[reservoirsStart + i].m_W = 0.0f
+    }
+
+
     uint3 launchIndex = DispatchRaysIndex();
     const RayDesc ray = gScene.camera.computeRayPinhole(launchIndex.xy, viewportDims).toRayDesc();
 

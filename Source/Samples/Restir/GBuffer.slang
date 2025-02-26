@@ -82,6 +82,9 @@ void primaryAnyHit(inout PrimaryRayData rayData, BuiltInTriangleIntersectionAttr
 void rayGen()
 {
     uint3 launchIndex = DispatchRaysIndex();
+    if (any(launchIndex.xy > (uint2)viewportDims))
+        return;
+
     const RayDesc ray = gScene.camera.computeRayPinhole(launchIndex.xy, viewportDims).toRayDesc();
 
     PrimaryRayData hitData;
