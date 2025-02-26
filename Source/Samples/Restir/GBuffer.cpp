@@ -46,32 +46,18 @@ void GBuffer::createTextures()
 
 void GBuffer::compilePrograms()
 {
-    // We'll now create a raytracing program. To do that we need to setup two things:
-    // - A program description (ProgramDesc). This holds all shader entry points, compiler flags, macro defintions,
-    // etc.
-    // - A binding table (RtBindingTable). This maps shaders to geometries in the scene, and sets the ray generation and
-    // miss shaders.
-    //
-    // After setting up these, we can create the Program and associated RtProgramVars that holds the variable/resource
-    // bindings. The Program can be reused for different scenes, but RtProgramVars needs to binding table which is
-    // Scene-specific and needs to be re-created when switching scene. In this example, we re-create both the program
-    // and vars when a scene is loaded.
-
     auto shaderModules = mpScene->getShaderModules();
     auto typeConformances = mpScene->getTypeConformances();
 
-    // Get scene defines. These need to be set on any program using the scene.
     auto defines = mpScene->getSceneDefines();
 
     ProgramDesc rtProgDesc;
     rtProgDesc.addShaderModules(shaderModules);
     rtProgDesc.addShaderLibrary("Samples/Restir/GBuffer.slang");
     rtProgDesc.addTypeConformances(typeConformances);
-    rtProgDesc.setMaxTraceRecursionDepth(1); // 1 for calling TraceRay from RayGen, 1 for calling it from the
-    // primary-ray ClosestHit shader for reflections, 1 for reflection ray
-    // tracing a shadow ray
-    rtProgDesc.setMaxPayloadSize(24); // The largest ray payload struct (PrimaryRayData) is 24 bytes. The payload size
-    // should be set as small as possible for maximum performance.
+    rtProgDesc.setMaxTraceRecursionDepth(1);
+
+    rtProgDesc.setMaxPayloadSize(24);
 
     ref<RtBindingTable> sbt = RtBindingTable::create(2, 2, mpScene->getGeometryCount());
     sbt->setRayGen(rtProgDesc.addRayGen("rayGen"));
