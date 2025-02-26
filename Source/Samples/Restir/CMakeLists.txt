@@ -6,7 +6,7 @@ target_sources(Restir PRIVATE
     LightManager.h
     ReservoirManager.h
     RestirApp.h
-    RIS.h
+    RISPass.h
     Singleton.h
     TemporalFiltering.h    
     Visibility.h
@@ -18,12 +18,12 @@ target_sources(Restir PRIVATE
     LightManager.cpp
     ReservoirManager.cpp
 	RestirApp.cpp
-	RIS.cpp
+	RISPass.cpp
 	TemporalFiltering.cpp
 	Visibility.cpp
 
     GBuffer.slang
-    RIS.slang
+    RISPass.slang
     TemporalFiltering.slang
     Visibility.slang
 

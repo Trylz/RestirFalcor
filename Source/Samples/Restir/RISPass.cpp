@@ -1,4 +1,4 @@
-#include "RIS.h"
+#include "RISPass.h"
 #include "GBuffer.h"
 #include "LightManager.h"
 #include "ReservoirManager.h"
@@ -7,12 +7,12 @@ namespace Restir
 {
     using namespace Falcor;
 
-    RIS::RIS(ref<Device> pDevice, uint32_t width, uint32_t height) : mWidth(width), mHeight(height)
+    RISPass::RISPass(ref<Device> pDevice, uint32_t width, uint32_t height) : mWidth(width), mHeight(height)
     {
-        mpRISPass = ComputePass::create(pDevice, "Samples/Restir/RIS.slang", "EntryPoint");
+        mpRISPass = ComputePass::create(pDevice, "Samples/Restir/RISPass.slang", "EntryPoint");
     }
 
-    void RIS::render(Falcor::RenderContext* pRenderContext, ref<Camera> pCamera)
+    void RISPass::render(Falcor::RenderContext* pRenderContext, ref<Camera> pCamera)
     {
         auto var = mpRISPass->getRootVar();
 
