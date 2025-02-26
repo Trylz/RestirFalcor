@@ -21,7 +21,9 @@ struct RestirReservoir
 
 struct ReservoirManager
 {
-    ReservoirManager(Falcor::ref<Falcor::Device> pDevice, uint32_t width, uint32_t height);
+    ReservoirManager();
+
+    void init(Falcor::ref<Falcor::Device> pDevice, uint32_t width, uint32_t height);
 
     inline const Falcor::ref<Falcor::Buffer>& getCurrentFrameReservoirBuffer() const { return *mCurrentFrameReservoir; }
     inline const Falcor::ref<Falcor::Buffer>& getPreviousFrameReservoirBuffer() const { return *mPreviousFrameReservoir; }

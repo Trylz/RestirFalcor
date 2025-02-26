@@ -3,10 +3,19 @@
 namespace Restir
 {
 
-GBuffer::GBuffer(ref<Device> pDevice, uint32_t width, uint32_t height) : mpDevice(pDevice), mWidth(width), mHeight(height)
+GBuffer::GBuffer()
 {
+}
+
+void GBuffer::init(ref<Device> pDevice, uint32_t width, uint32_t height)
+{
+    mpDevice = pDevice;
+    mWidth = width;
+    mHeight = height;
+
     createTextures();
 }
+
 
 void GBuffer::createTextures()
 {

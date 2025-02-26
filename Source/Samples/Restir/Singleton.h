@@ -10,10 +10,10 @@ class Singleton
 public:
     Singleton() = delete;
 
-    static InstanceType* create(ConstructArgs... args)
+    static InstanceType* create()
     {
         FMT_ASSERT(m_instance == nullptr, "");
-        m_instance = new InstanceType(args...);
+        m_instance = new InstanceType();
 
         return m_instance;
     }

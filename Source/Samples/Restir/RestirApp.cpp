@@ -107,8 +107,13 @@ void RestirApp::loadScene(const std::filesystem::path& path, const Fbo* pTargetF
 
     // Create the singletons.
     Restir::GBufferSingleton::create();
+    Restir::GBufferSingleton::instance()->init(getDevice(), pTargetFbo->getWidth(), pTargetFbo->getHeight());
+
     Restir::LightManagerSingleton::create();
+    Restir::LightManagerSingleton::instance()->init(getDevice(), mpScene);
+
     Restir::ReservoirManagerSingleton::create();
+    Restir::ReservoirManagerSingleton::instance()->init(getDevice(), pTargetFbo->getWidth(), pTargetFbo->getHeight());
 }
 
 void RestirApp::setPerFrameVars(const Fbo* pTargetFbo)
@@ -134,8 +139,9 @@ void RestirApp::render(RenderContext* pRenderContext, const ref<Fbo>& pTargetFbo
 
     setPerFrameVars(pTargetFbo.get());
 
-    mpGufferPass->render(pRenderContext, mpScene);
-    pRenderContext->blit(mpGufferPass->getAlbedoTexture()->getSRV(), pTargetFbo->getRenderTargetView(0));
+    Restir::GBufferSingleton::instance()->render(pRenderContext, mpScene);
+
+    pRenderContext->blit(Restir::GBufferSingleton::instance()->getAlbedoTexture()->getSRV(), pTargetFbo->getRenderTargetView(0));
 }
 
 int runMain(int argc, char** argv)

@@ -2,7 +2,12 @@
 namespace Restir
 {
 
-ReservoirManager::ReservoirManager(Falcor::ref<Falcor::Device> pDevice, uint32_t width, uint32_t height)
+ReservoirManager::ReservoirManager()
+{
+}
+
+
+void ReservoirManager::init(Falcor::ref<Falcor::Device> pDevice, uint32_t width, uint32_t height)
 {
     //------------------------------------------------------------------------------------------------------------
     //	Init reservoirs

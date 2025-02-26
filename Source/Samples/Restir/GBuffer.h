@@ -7,7 +7,10 @@ namespace Restir
 class GBuffer 
 {
 public:
-    GBuffer(ref<Device> pDevice, uint32_t width, uint32_t height);
+    GBuffer();
+
+    void init(ref<Device> pDevice, uint32_t width, uint32_t height);
+
     void render(RenderContext* pRenderContext, ref<Scene> pScene);
 
     inline const ref<Texture>& getPositionWsTexture() const { return mPositionWsTexture; }

@@ -6,18 +6,23 @@ float luma(Falcor::float3 v)
     return 0.2126f * v.r + 0.7152f * v.g + 0.0722f * v.b;
 }
 
-LightManager::LightManager(Falcor::ref<Falcor::Device> pDevice, Falcor::ref<Falcor::Scene> pScene)
+LightManager::LightManager()
+{
+}
+
+void LightManager::init(Falcor::ref<Falcor::Device> pDevice, Falcor::ref<Falcor::Scene> pScene)
 {
     //------------------------------------------------------------------------------------------------------------
     //	Create a light at center of scene
     //------------------------------------------------------------------------------------------------------------
-    Light light;
-    light.mWsPosition = pScene->getSceneBounds().center();
-    light.mRadiance = Falcor::float3(0.8f, 0.8f, 0.8f) * 4.0f;
-    light.mRadius = 0.0001f;
-    light.mfallOff = std::min((light.mRadius * light.mRadius) * std::exp(1.0f / 0.0001f), 1.0f);
-    mLights.push_back(light);
-
+    {
+        Light light;
+        light.mWsPosition = pScene->getSceneBounds().center();
+        light.mRadiance = Falcor::float3(0.8f, 0.8f, 0.8f) * 4.0f;
+        light.mRadius = 0.0001f;
+        light.mfallOff = std::min((light.mRadius * light.mRadius) * std::exp(1.0f / 0.0001f), 1.0f);
+        mLights.push_back(light);
+    }
     //------------------------------------------------------------------------------------------------------------
     //	Compute light probabilities
     //------------------------------------------------------------------------------------------------------------
