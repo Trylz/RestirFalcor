@@ -8,6 +8,7 @@ target_sources(Restir PRIVATE
     RestirApp.h
     RISPass.h
     Singleton.h
+    ShadingPass.h
     TemporalFilteringPass.h    
     VisibilityPass.h
 
@@ -18,11 +19,13 @@ target_sources(Restir PRIVATE
     ReservoirManager.cpp
 	RestirApp.cpp
 	RISPass.cpp
+    ShadingPass.cpp
 	TemporalFilteringPass.cpp
 	VisibilityPass.cpp
 
     GBuffer.slang
     RISPass.slang
+    ShadingPass.slang
     TemporalFilteringPass.slang
     VisibilityPass.slang
 
