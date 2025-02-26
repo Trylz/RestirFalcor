@@ -1,3 +1,4 @@
+#include "Light.slangh"
 #include "Reservoir.slangh"
 
 import Utils.Sampling.TinyUniformSampleGenerator;
@@ -6,8 +7,21 @@ cbuffer PerFrameCB
 {
     uint2 viewportDims;
     uint sampleIndex;
-    uint sampleIndex;
+    uint nbRervoirPerPixel;
+    uint lightCount;
 };
+
+StructuredBuffer<RestirReservoir> gReservoirs;
+StructuredBuffer<RestirLight> gLights;
+
+Texture2D<float4> gPositionWs;
+Texture2D<float4> gNormalWs;
+Texture2D<float4> gAlbedo;
+Texture2D<float4> gSpecular;
+
+RestirReservoir RIS(uint2 pixel, inout TinyUniformSampleGenerator rng)
+{
+}
 
 [numthreads(16, 16, 1)]
 void EntyPoint(uint3 threadId: SV_DispatchThreadID)
@@ -15,29 +29,14 @@ void EntyPoint(uint3 threadId: SV_DispatchThreadID)
     if (any(threadId.xy > viewportDims))
         return;
 
+    const uint pixelLinearIndex = threadId.y * viewportDims.x + threadId.x;
+    const size_t reservoirsStart = pixelLinearIndex * nbRervoirPerPixel;
 
+    TinyUniformSampleGenerator rng = TinyUniformSampleGenerator(threadId.xy, sampleIndex);
 
-
-    float metallic;
-    if (metallicChannel < 0)
+    for (uint i = 0; i <nbRervoirPerPixel; ++i)
     {
-        metallic = metallicValue;
+        gReservoirs[reservoirsStart + i] = RIS(threadId.xy, rng);
     }
-    else
-    {
-        metallic = sampleTexture(metallicTexture, sampler, threadId.xy, outDim)[metallicChannel];
-    }
-
-    float roughness;
-    if (roughnessChannel < 0)
-    {
-        roughness = roughnessValue;
-    }
-    else
-    {
-        roughness = sampleTexture(roughnessTexture, sampler, threadId.xy, outDim)[roughnessChannel];
-    }
-
-    outputTexture[threadId.xy] = float4(0., saturate(roughness), saturate(metallic), 1.);
 }
 

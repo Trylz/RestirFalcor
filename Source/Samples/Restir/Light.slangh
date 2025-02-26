@@ -1,4 +1,4 @@
-struct Light
+struct RestirLight
 {
     float3 mWsPosition;
     float3 mRadiance;
