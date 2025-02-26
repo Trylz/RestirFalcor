@@ -24,9 +24,9 @@ Texture2D<float4> gSpecular;
 
 struct SampleToLight
 {
-	Math::Vec3 L;
-	nbFloat32 length;
-	nbFloat32 intensityMultiplier;
+	float3 L;
+	float length;
+	float intensityMultiplier;
 };
 
 //@ See : https://www.scratchapixel.com/lessons/3d-basic-rendering/global-illumination-path-tracing/global-illumination-path-tracing-practical-implementation.html
@@ -41,12 +41,12 @@ inline float3 uniformSphericalSample(float r1, float r2)
     float x = sinTheta * cos(phi);
     float z = sinTheta * sin(phi);
 
-    return Math::Vec3(x, r1, z);
+    return float3(x, r1, z);
 }
 
 SampleToLight generateSampleTolight(float3 P, RestirLight light, inout TinyUniformSampleGenerator rng)
 {
-	const float lightToP = P - light.mWsPosition;
+	const float3 lightToP = P - light.mWsPosition;
 	const float distToLight = length(lightToP);
 
 	const float r1 = sampleNext1D(rng) * 2.0f - 1.0f;
@@ -146,6 +146,8 @@ RestirReservoir RIS(uint2 pixel)
 			r.m_W = 0.0f;
 		}
 	}
+
+	return r;
 }
 
 [numthreads(16, 16, 1)]
