@@ -21,7 +21,7 @@ target_sources(Restir PRIVATE
 	TemporalFiltering.cpp
 	Visibility.cpp
 
-    GBuffer.slang
+    GBuffer.slangh
     Reservoir.slang
     RIS.slang
     TemporalFiltering.slang
