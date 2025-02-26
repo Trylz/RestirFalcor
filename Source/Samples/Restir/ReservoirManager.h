@@ -6,17 +6,17 @@ namespace Restir
 {
 struct RestirSample
 {
-    Falcor::float3 geometryPos;
-    Falcor::float3 lightSamplePosition;
-    Falcor::float3 incomingRadiance;
+    Falcor::float3 mGeometryPos;
+    Falcor::float3 mLightSamplePosition;
+    Falcor::float3 mIncomingRadiance;
 };
 
 struct RestirReservoir
 {
-    RestirSample m_y;
-    float m_Wsum = 0.0f;
-    uint32_t m_M = 0;
-    float m_W = 0.0f;
+    RestirSample mY;
+    float mWsum = 0.0f;
+    uint32_t mM = 0;
+    float mW = 0.0f;
 };
 
 struct ReservoirManager

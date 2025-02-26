@@ -26,6 +26,7 @@ target_sources(Restir PRIVATE
     TemporalFiltering.slang
     Visibility.slang
 
+    Light.slangh
     Reservoir.slangh
 )
 

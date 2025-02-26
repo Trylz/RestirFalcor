@@ -1,0 +1,7 @@
+struct Light
+{
+    float3 mWsPosition;
+    float3 mRadiance;
+    float mRadius;
+    float mfallOff;
+};
