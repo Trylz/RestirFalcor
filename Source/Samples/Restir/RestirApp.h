@@ -3,6 +3,7 @@
 #include "Falcor.h"
 #include "GBuffer.h"
 #include "RISPass.h"
+#include "VisibilityPass.h"
 #include "Core/SampleApp.h"
 
 using namespace Falcor;
@@ -28,4 +29,5 @@ private:
     ref<Camera> mpCamera;
 
     ref<Restir::RISPass> mpRISPass;
+    ref<Restir::VisibilityPass> mpVisibilityPass;
 };

@@ -117,6 +117,7 @@ void RestirApp::loadScene(const std::filesystem::path& path, const Fbo* pTargetF
 
     // Create the render passes.
     mpRISPass.reset(new Restir::RISPass(getDevice(), pTargetFbo->getWidth(), pTargetFbo->getHeight()));
+    mpVisibilityPass.reset(new Restir::VisibilityPass(getDevice(), mpScene, pTargetFbo->getWidth(), pTargetFbo->getHeight()));
 }
 
 void RestirApp::render(RenderContext* pRenderContext, const ref<Fbo>& pTargetFbo)
@@ -126,6 +127,7 @@ void RestirApp::render(RenderContext* pRenderContext, const ref<Fbo>& pTargetFbo
 
     Restir::GBufferSingleton::instance()->render(pRenderContext);
     mpRISPass->render(pRenderContext, mpCamera);
+    mpVisibilityPass->render(pRenderContext);
 
     pRenderContext->blit(Restir::GBufferSingleton::instance()->getAlbedoTexture()->getSRV(), pTargetFbo->getRenderTargetView(0));
 }
