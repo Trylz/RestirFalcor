@@ -11,6 +11,7 @@ target_sources(Restir PRIVATE
     TemporalFiltering.h    
     Visibility.h
 
+    BRDF.slangh
 	Denoising.cpp
     FloatRandomNumberGenerator.h
     GBuffer.cpp
