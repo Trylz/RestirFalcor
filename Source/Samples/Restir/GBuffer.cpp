@@ -7,13 +7,15 @@ GBuffer::GBuffer()
 {
 }
 
-void GBuffer::init(ref<Device> pDevice, uint32_t width, uint32_t height)
+void GBuffer::init(ref<Device> pDevice, ref<Scene> pScene, uint32_t width, uint32_t height)
 {
     mpDevice = pDevice;
+    mpScene = pScene;
     mWidth = width;
     mHeight = height;
 
     createTextures();
+    compilePrograms();
 }
 
 
@@ -83,14 +85,8 @@ void GBuffer::compilePrograms()
     mpRtVars = RtProgramVars::create(mpDevice, mpRaytraceProgram, sbt);
 }
 
-void GBuffer::render(RenderContext* pRenderContext, ref<Scene> pScene)
+void GBuffer::render(RenderContext* pRenderContext)
 {
-    if (pScene != mpScene)
-    {
-        mpScene = pScene.get();
-        compilePrograms();
-    }
-
     auto var = mpRtVars->getRootVar();
 
     var["PerFrameCB"]["viewportDims"] = float2(mWidth, mHeight);

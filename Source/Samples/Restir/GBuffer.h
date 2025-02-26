@@ -9,9 +9,9 @@ class GBuffer
 public:
     GBuffer();
 
-    void init(ref<Device> pDevice, uint32_t width, uint32_t height);
+    void init(ref<Device> pDevice, ref<Scene> pScene, uint32_t width, uint32_t height);
 
-    void render(RenderContext* pRenderContext, ref<Scene> pScene);
+    void render(RenderContext* pRenderContext);
 
     inline const ref<Texture>& getPositionWsTexture() const { return mPositionWsTexture; }
     inline const ref<Texture>& getNormalWsTexture() const { return mNormalWsTexture; }
@@ -24,7 +24,7 @@ private:
     void compilePrograms();
 
     ref<Device> mpDevice;
-    Scene* mpScene = nullptr; // TODO use smart pointer
+    ref<Scene> mpScene;
 
     uint32_t mWidth;
     uint32_t mHeight;
