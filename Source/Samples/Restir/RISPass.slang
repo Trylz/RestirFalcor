@@ -13,7 +13,7 @@ cbuffer PerFrameCB
     uint lightCount;
 };
 
-StructuredBuffer<RestirReservoir> gReservoirs;
+RWStructuredBuffer<RestirReservoir> gReservoirs;
 StructuredBuffer<RestirLight> gLights;
 StructuredBuffer<float> gLightProbabilities;
 
@@ -46,14 +46,14 @@ inline float3 uniformSphericalSample(float r1, float r2)
 
 SampleToLight generateSampleTolight(float3 P, RestirLight light, inout TinyUniformSampleGenerator rng)
 {
-	const float lightToP = P - light;
+	const float lightToP = P - light.mWsPosition;
 	const float distToLight = length(lightToP);
 
 	const float r1 = sampleNext1D(rng) * 2.0f - 1.0f;
 	const float r2 = sampleNext1D(rng);
 	
 	float3 lightToSample = uniformSphericalSample(r1, r2);
-	if (glm::dot(lightToP, lightToSample) / distToLight < 0.0f)
+	if (dot(lightToP, lightToSample) / distToLight < 0.0f)
 	{
 		// Sample is on the back hemisphere. Take the opposite one.
 		lightToSample *= -1;
@@ -65,7 +65,7 @@ SampleToLight generateSampleTolight(float3 P, RestirLight light, inout TinyUnifo
 	sample.L /= sample.length;
 
 	sample.intensityMultiplier = light.mfallOff / (sample.length * sample.length);
-	sample.intensityMultiplier = std::min(sample.intensityMultiplier, 1.0f);
+	sample.intensityMultiplier = min(sample.intensityMultiplier, 1.0f);
 }
 
 float luma(float3 v)
@@ -82,7 +82,7 @@ RestirReservoir RIS(uint2 pixel)
 
     const float3 P = gPositionWs[pixel].xyz;
     const float3 N = gNormalWs[pixel].xyz;
-    const float3 V = normalize(P - cameraPositionWs)
+    const float3 V = normalize(P - cameraPositionWs);
     const float3 diffuse = gAlbedo[pixel].xyz;
     const float3 specular = gSpecular[pixel].xyz;
     const float roughness = gSpecular[pixel].w;
@@ -92,14 +92,14 @@ RestirReservoir RIS(uint2 pixel)
 		// First randomly select a light.
         const float rand = sampleNext1D(rng);
 
-		const uint lightIndex = rand * (float)(lightCount - 1.0f));
+		const uint lightIndex = (uint)(rand * (float)(lightCount - 1.0f));
         //lightIndex = min(lightIndex,lightCount - 1u);
 
         // Read the light
         const RestirLight light = gLights[lightIndex];
 
 		// Generate a random sample to light
-		const SampleToLight sampleToLight = generateSampleTolight(P, light, rng)
+		const SampleToLight sampleToLight = generateSampleTolight(P, light, rng);
 
 		// Read light probability
 		const float px = gLightProbabilities[lightIndex];
@@ -120,7 +120,7 @@ RestirReservoir RIS(uint2 pixel)
 		// Build the sample.
 		RestirSample xi;
 		xi.mGeometryPos = P;
-		xi.mLightSamplePosition = xi.geometryPos + (sampleToLight.L * sampleToLight.length);
+		xi.mLightSamplePosition = xi.mGeometryPos + (sampleToLight.L * sampleToLight.length);
 		xi.mIncomingRadiance = light.mRadiance;
 
 		// Update the reservoir with brand new sample.
@@ -132,14 +132,14 @@ RestirReservoir RIS(uint2 pixel)
 		float3 ppxSpectrum = r.mY.mIncomingRadiance;
 		{
             const float3 L = normalize(r.mY.mLightSamplePosition - r.mY.mGeometryPos);
-			const RGBFColor sampledBrdf = evaluateBRDF(N, L, V, diffuse, specular, roughness);
+			const float3 sampledBrdf = evaluateBRDF(N, L, V, diffuse, specular, roughness);
 			ppxSpectrum *= sampledBrdf * max(0.0f, dot(L, N));
 		}
 
 		const float ppx = luma(ppxSpectrum);
 		if (ppx != 0.0f)
 		{
-			r.m_W = r.mWsum / ((nbFloat32)r.mM * ppx);
+			r.m_W = r.mWsum / ((float)r.mM * ppx);
 		}
 		else
 		{
@@ -155,7 +155,7 @@ void EntryPoint(uint3 threadId: SV_DispatchThreadID)
         return;
 
     const uint pixelLinearIndex = threadId.y * viewportDims.x + threadId.x;
-    const size_t reservoirsStart = pixelLinearIndex * nbRervoirPerPixel;
+    const size_t reservoirsStart = pixelLinearIndex * nbReservoirPerPixel;
 
     for (uint i = 0; i <nbReservoirPerPixel; ++i)
     {
