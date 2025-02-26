@@ -21,11 +21,12 @@ target_sources(Restir PRIVATE
 	TemporalFiltering.cpp
 	Visibility.cpp
 
-    GBuffer.slangh
-    Reservoir.slang
+    GBuffer.slang
     RIS.slang
     TemporalFiltering.slang
     Visibility.slang
+
+    Reservoir.slangh
 )
 
 target_copy_shaders(Restir Samples/Restir)
