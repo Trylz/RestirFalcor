@@ -1,18 +1,15 @@
+#include "Reservoir.slangh"
+
 import Scene.Raytracing;
 import Utils.Sampling.TinyUniformSampleGenerator;
-import Rendering.Lights.LightHelpers;
-
-RWTexture2D<float4> gPositionWs;
-RWTexture2D<float4> gNormalWs;
-RWTexture2D<float4> gAlbedo;
-RWTexture2D<float4> gSpecular;
-RWTexture2D<float4> gMotionVector;
 
 cbuffer PerFrameCB
 {
-    float2 viewportDims;
-    uint sampleIndex;
+    uint nbReservoirPerPixel;
 };
+
+RWStructuredBuffer<RestirReservoir> gReservoirs;
+
 
 struct PrimaryRayData
 {
@@ -21,72 +18,29 @@ struct PrimaryRayData
 
 struct ShadowRayData
 {
-    bool dummy;
+    bool hit;
 };
 
 [shader("miss")]
 void shadowMiss(inout ShadowRayData hitData)
 {
+    hitData.hit = false;
 }
 
 [shader("anyhit")]
 void shadowAnyHit(inout ShadowRayData hitData, BuiltInTriangleIntersectionAttributes attribs)
 {
+    hitData.hit = true;
 }
 
 [shader("miss")]
 void primaryMiss(inout PrimaryRayData hitData)
 {
-    uint2 launchIndex = DispatchRaysIndex().xy;
-    gPositionWs[launchIndex].w = 0.0f;
 }
 
 [shader("closesthit")]
 void primaryClosestHit(inout PrimaryRayData hitData, BuiltInTriangleIntersectionAttributes attribs)
 {
-    // Get the hit-point data.
-    float3 rayDirW = WorldRayDirection();
-    float hitT = RayTCurrent();
-    uint triangleIndex = PrimitiveIndex();
-
-    // Prepare the shading data.
-    const GeometryInstanceID instanceID = getGeometryInstanceID();
-    VertexData v = getVertexData(instanceID, triangleIndex, attribs);
-    uint materialID = gScene.getMaterialID(instanceID);
-    ShadingData sd = gScene.materials.prepareShadingData(v, materialID, -rayDirW);
-
-    // Create material instance and query its properties.
-    let lod = ExplicitLodTextureSampler(0.f);
-    let mi = gScene.materials.getMaterialInstance(sd, lod);
-    let bsdfProperties = mi.getProperties(sd);
-
-
-    // The launch index.
-    const uint2 launchIndex = DispatchRaysIndex().xy;
-
-    // Write the ws position.
-    {
-        gPositionWs[launchIndex] = float4(sd.posW, 1.f);
-    }
-    // Write the ws normal.
-    {
-        gNormalWs[launchIndex] = float4(sd.faceN, 1.f);
-    }
-
-    // Write the albedo.
-    {
-        gAlbedo[launchIndex] = float4(bsdfProperties.diffuseReflectionAlbedo, 1.f);
-    }
-
-    // Write the specular.
-    {
-        gSpecular[launchIndex] = float4(bsdfProperties.specularReflectionAlbedo, bsdfProperties.roughness);
-    }
-
-    // Write the velocity TODO.
-    {
-        gPositionWs[launchIndex] = float4(0.0f, 0.0f, 0.0f, 0.0f);
-    }
 }
 
 [shader("anyhit")]
