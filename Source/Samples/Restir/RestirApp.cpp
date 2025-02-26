@@ -114,22 +114,9 @@ void RestirApp::loadScene(const std::filesystem::path& path, const Fbo* pTargetF
 
     Restir::ReservoirManagerSingleton::create();
     Restir::ReservoirManagerSingleton::instance()->init(getDevice(), pTargetFbo->getWidth(), pTargetFbo->getHeight());
-}
 
-void RestirApp::setPerFrameVars(const Fbo* pTargetFbo)
-{
-    /*
-
-       auto var = mpRtVars->getRootVar();
-    var["PerFrameCB"]["invView"] = inverse(mpCamera->getViewMatrix());
-    var["PerFrameCB"]["viewportDims"] = float2(pTargetFbo->getWidth(), pTargetFbo->getHeight());
-    float fovY = focalLengthToFovY(mpCamera->getFocalLength(), Camera::kDefaultFrameHeight);
-    var["PerFrameCB"]["tanHalfFovY"] = std::tan(fovY * 0.5f);
-    var["PerFrameCB"]["sampleIndex"] = mSampleIndex++;
-    var["PerFrameCB"]["useDOF"] = mUseDOF;
-    var["gOutput"] = mpRtOut;
-
-    */
+    // Create the render passes.
+    mpRISPass.reset(new Restir::RISPass(getDevice(), pTargetFbo->getWidth(), pTargetFbo->getHeight()));
 }
 
 void RestirApp::render(RenderContext* pRenderContext, const ref<Fbo>& pTargetFbo)
@@ -137,9 +124,8 @@ void RestirApp::render(RenderContext* pRenderContext, const ref<Fbo>& pTargetFbo
     FALCOR_ASSERT(mpScene);
     FALCOR_PROFILE(pRenderContext, "RestirApp::render");
 
-    setPerFrameVars(pTargetFbo.get());
-
     Restir::GBufferSingleton::instance()->render(pRenderContext);
+    mpRISPass->render(pRenderContext, mpCamera);
 
     pRenderContext->blit(Restir::GBufferSingleton::instance()->getAlbedoTexture()->getSRV(), pTargetFbo->getRenderTargetView(0));
 }

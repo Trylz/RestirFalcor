@@ -2,6 +2,7 @@
 
 #include "Falcor.h"
 #include "GBuffer.h"
+#include "RISPass.h"
 #include "Core/SampleApp.h"
 
 using namespace Falcor;
@@ -21,9 +22,10 @@ public:
 
 private:
     void loadScene(const std::filesystem::path& path, const Fbo* pTargetFbo);
-    void setPerFrameVars(const Fbo* pTargetFbo);
     void render(RenderContext* pRenderContext, const ref<Fbo>& pTargetFbo);
 
     ref<Scene> mpScene;
     ref<Camera> mpCamera;
+
+    ref<Restir::RISPass> mpRISPass;
 };
