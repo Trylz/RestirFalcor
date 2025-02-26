@@ -1,32 +1,32 @@
 add_falcor_executable(Restir)
 
 target_sources(Restir PRIVATE
-	Denoising.h
+	DenoisingPass.h
     GBuffer.h
     LightManager.h
     ReservoirManager.h
     RestirApp.h
     RISPass.h
     Singleton.h
-    TemporalFiltering.h    
-    Visibility.h
+    TemporalFilteringPass.h    
+    VisibilityPass.h
 
-    BRDF.slangh
-	Denoising.cpp
+	DenoisingPass.cpp
     FloatRandomNumberGenerator.h
     GBuffer.cpp
     LightManager.cpp
     ReservoirManager.cpp
 	RestirApp.cpp
 	RISPass.cpp
-	TemporalFiltering.cpp
-	Visibility.cpp
+	TemporalFilteringPass.cpp
+	VisibilityPass.cpp
 
     GBuffer.slang
     RISPass.slang
-    TemporalFiltering.slang
-    Visibility.slang
+    TemporalFilteringPass.slang
+    VisibilityPass.slang
 
+    BRDF.slangh
     Light.slangh
     Reservoir.slangh
 )

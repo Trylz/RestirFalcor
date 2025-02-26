@@ -1,6 +1,7 @@
 #pragma once
-#include "../RenderPasses/GBuffer/GBuffer/GBufferRaster.h"
+
 #include "Singleton.h"
+#include "../RenderPasses/GBuffer/GBuffer/GBufferRaster.h"
 
 namespace Restir
 {

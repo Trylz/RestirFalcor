@@ -1,6 +1,6 @@
 
-// TODO.
-float3 evaluateBRDF(float3 N, float3 L, float3 V, float3 diffuse, float3 specular, float3 roughness)
+float3 evaluateBRDF(float3 N, float3 L, float3 V, float3 diffuse, float3 specular, float roughness)
 {
+    // TODO.
     return diffuse / 3.141592653f;
 }
