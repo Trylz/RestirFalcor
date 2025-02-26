@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Singleton.h"
-#include "../RenderPasses/GBuffer/GBuffer/GBufferRaster.h"
 
 namespace Restir
 {
@@ -10,34 +9,34 @@ class GBuffer
 public:
     GBuffer();
 
-    void init(ref<Device> pDevice, ref<Scene> pScene, uint32_t width, uint32_t height);
+    void init(Falcor::ref<Falcor::Device> pDevice, Falcor::ref<Falcor::Scene> pScene, uint32_t width, uint32_t height);
 
-    void render(RenderContext* pRenderContext);
+    void render(Falcor::RenderContext* pRenderContext);
 
-    inline const ref<Texture>& getPositionWsTexture() const { return mPositionWsTexture; }
-    inline const ref<Texture>& getNormalWsTexture() const { return mNormalWsTexture; }
-    inline const ref<Texture>& getAlbedoTexture() const { return mAlbedoTexture; }
-    inline const ref<Texture>& getSpecularTexture() const { return mSpecularTexture; }
-    inline const ref<Texture>& getMotionVectorTexture() const { return mMotionVectorTexture; }
+    inline const Falcor::ref<Falcor::Texture>& getPositionWsTexture() const { return mPositionWsTexture; }
+    inline const Falcor::ref<Falcor::Texture>& getNormalWsTexture() const { return mNormalWsTexture; }
+    inline const Falcor::ref<Falcor::Texture>& getAlbedoTexture() const { return mAlbedoTexture; }
+    inline const Falcor::ref<Falcor::Texture>& getSpecularTexture() const { return mSpecularTexture; }
+    inline const Falcor::ref<Falcor::Texture>& getMotionVectorTexture() const { return mMotionVectorTexture; }
 
 private:
     void createTextures();
     void compilePrograms();
 
-    ref<Device> mpDevice;
-    ref<Scene> mpScene;
+    Falcor::ref<Falcor::Device> mpDevice;
+    Falcor::ref<Falcor::Scene> mpScene;
 
     uint32_t mWidth;
     uint32_t mHeight;
 
-    ref<Texture> mPositionWsTexture;
-    ref<Texture> mNormalWsTexture;
-    ref<Texture> mAlbedoTexture;
-    ref<Texture> mSpecularTexture;
-    ref<Texture> mMotionVectorTexture;
+    Falcor::ref<Falcor::Texture> mPositionWsTexture;
+    Falcor::ref<Falcor::Texture> mNormalWsTexture;
+    Falcor::ref<Falcor::Texture> mAlbedoTexture;
+    Falcor::ref<Falcor::Texture> mSpecularTexture;
+    Falcor::ref<Falcor::Texture> mMotionVectorTexture;
 
-    ref<Program> mpRaytraceProgram;
-    ref<RtProgramVars> mpRtVars;
+    Falcor::ref<Falcor::Program> mpRaytraceProgram;
+    Falcor::ref<Falcor::RtProgramVars> mpRtVars;
 
     uint32_t mSampleIndex = 0u;
 };

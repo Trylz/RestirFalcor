@@ -2,6 +2,7 @@
 
 namespace Restir
 {
+using namespace Falcor;
 
 GBuffer::GBuffer()
 {
