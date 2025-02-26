@@ -75,7 +75,7 @@ float luma(float3 v)
 
 RestirReservoir RIS(uint2 pixel)
 {
-    TinyUniformSampleGenerator rng = TinyUniformSampleGenerator(threadId.xy, sampleIndex);
+    TinyUniformSampleGenerator rng = TinyUniformSampleGenerator(pixel, sampleIndex);
 
     RestirReservoir r;
     initReservoir(r);
@@ -92,7 +92,7 @@ RestirReservoir RIS(uint2 pixel)
 		// First randomly select a light.
         const float rand = sampleNext1D(rng);
 
-		const uint lightIndex =  rand * (float)(lightCount - 1.0f));
+		const uint lightIndex = rand * (float)(lightCount - 1.0f));
         //lightIndex = min(lightIndex,lightCount - 1u);
 
         // Read the light
@@ -129,22 +129,17 @@ RestirReservoir RIS(uint2 pixel)
 
 	// Compute and set RIS global weight.
 	{
-		Spectrum ppxSpectrum = r.m_y.incomingRadiance;
+		float3 ppxSpectrum = r.mY.mIncomingRadiance;
 		{
-			Material::BaseMaterial::SampleBsdfData bsdfSample;
-			bsdfSample.L = glm::normalize(r.m_y.lightSamplePosition - r.m_y.geometryPos);
-			bsdfSample.V = isectProps.V;
-			bsdfSample.NoL = glm::dot(bsdfSample.L, isectProps.BsdfProps.N);
-			bsdfSample.geoProps = &isectProps.BsdfProps;
-
-			const RGBFColor sampledBrdf = material.sampleBsdf(materialColorCache, bsdfSample);
-			ppxSpectrum *= sampledBrdf;
+            const float3 L = normalize(r.mY.mLightSamplePosition - r.mY.mGeometryPos);
+			const RGBFColor sampledBrdf = evaluateBRDF(N, L, V, diffuse, specular, roughness);
+			ppxSpectrum *= sampledBrdf * max(0.0f, dot(L, N));
 		}
 
-		const nbFloat32 ppx = luma(ppxSpectrum);
+		const float ppx = luma(ppxSpectrum);
 		if (ppx != 0.0f)
 		{
-			r.m_W = r.m_Wsum / ((nbFloat32)r.m_M * ppx);
+			r.m_W = r.mWsum / ((nbFloat32)r.mM * ppx);
 		}
 		else
 		{
