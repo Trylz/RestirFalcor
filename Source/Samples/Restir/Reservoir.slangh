@@ -1,0 +1,110 @@
+
+struct RestirSample
+{
+    float3 mGeometryPos;
+    float3 mLightSamplePosition;
+    float3 mIncomingRadiance;
+};
+
+struct RestirReservoir
+{
+    RestirSample mY;
+    float mWsum;
+    uint mM;
+    float m_W;
+    float m_hitDistance;
+};
+
+void initReservoir(inout RestirReservoir r)
+{
+    r.mWsum = 0.0f;
+    r.mM = 0;
+    r.m_W = 0.0f;
+    r.m_hitDistance = 1e8f;
+}
+
+void updateReservoir(inout RestirReservoir r, inout TinyUniformSampleGenerator rng, RestirSample xi, float wi)
+{
+	r.mWsum += wi;
+	++r.mM;
+
+	if (r.mWsum>0.0f && sampleNext1D(rng) < wi / r.mWsum)
+		r.mY = xi;
+}
+
+float luma(float3 v)
+{
+    return 0.2126f * v.r + 0.7152f * v.g + 0.0722f * v.b;
+}
+
+
+float3 evaluateBRDF(float3 N, float3 L, float3 V, float3 diffuse, float3 specular, float roughness)
+{
+    // TODO.
+    return diffuse / 3.141592653f;
+}
+
+RestirReservoir combineReservoirs(
+    RestirReservoir r1,
+    RestirReservoir r2,
+    float3 P,
+    float3 N,
+    float3 V,
+    float3 diffuse,
+    float3 specular,
+    float roughness,
+    inout TinyUniformSampleGenerator rng
+)
+{
+    RestirReservoir s;
+    initReservoir(s);
+
+    {
+        float3 ppxSpectrum = r1.mY.mIncomingRadiance;
+        {
+            const float3 L = normalize(r1.mY.mLightSamplePosition - P);
+            const float3 sampledBrdf = evaluateBRDF(N, L, V, diffuse, specular, roughness);
+            ppxSpectrum *= sampledBrdf * max(0.0f, dot(L, N));
+        }
+        const float ppx = luma(ppxSpectrum);
+
+        updateReservoir(s, rng, r1.mY, ppx * r1.m_W * (float)r1.mM);
+    }
+
+    {
+        float3 ppxSpectrum = r2.mY.mIncomingRadiance;
+        {
+            const float3 L = normalize(r2.mY.mLightSamplePosition - P);
+            const float3 sampledBrdf = evaluateBRDF(N, L, V, diffuse, specular, roughness);
+            ppxSpectrum *= sampledBrdf * max(0.0f, dot(L, N));
+        }
+        const float ppx = luma(ppxSpectrum);
+
+        updateReservoir(s, rng, r2.mY, ppx * r2.m_W * (float)r2.mM);
+    }
+
+    s.mM = r1.mM + r2.mM;
+
+    // Compute and set global weight.
+    {
+        float3 ppxSpectrum = s.mY.mIncomingRadiance;
+        {
+            const float3 L = normalize(s.mY.mLightSamplePosition - P);
+            const float3 sampledBrdf = evaluateBRDF(N, L, V, diffuse, specular, roughness);
+            ppxSpectrum *= sampledBrdf * max(0.0f, dot(L, N));
+        }
+
+        const float ppx = luma(ppxSpectrum);
+        if (ppx != 0.0f)
+        {
+            s.m_W = s.mWsum / ((float)s.mM * ppx);
+        }
+        else
+        {
+            s.m_W = 0.0f;
+        }
+    }
+
+    return s;
+}
+
