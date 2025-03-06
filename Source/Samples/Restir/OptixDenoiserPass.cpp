@@ -82,7 +82,7 @@ OptixDenoiserPass::OptixDenoiserPass(
         1,
         nullptr,
         ResourceBindFlags::ShaderResource | ResourceBindFlags::UnorderedAccess | ResourceBindFlags::RenderTarget |
-            ResourceBindFlags::Shared /*YANN*/
+            ResourceBindFlags::Shared
     );
     mOutputTexture->setName("OptixDenoiserPass_Output");
 
@@ -131,7 +131,7 @@ void OptixDenoiserPass::compile(RenderContext* pRenderContext)
         mDenoiser.hdrAverageBuffer.resize(3 * sizeof(float));
 
     // Create an intensity GPU buffer to pass to OptiX when appropriate
-    if (!mDenoiser.kernelPredictionMode || !mDenoiser.useAOVs) // YANN not sure about this
+    if (!mDenoiser.kernelPredictionMode || !mDenoiser.useAOVs)
     {
         mDenoiser.params.hdrIntensity = mDenoiser.intensityBuffer.getDevicePtr();
         mDenoiser.params.hdrAverageColor = static_cast<CUdeviceptr>(0);
@@ -164,7 +164,6 @@ void OptixDenoiserPass::allocateStagingBuffer(RenderContext* pRenderContext, Int
         break;
     case OPTIX_PIXEL_FORMAT_FLOAT3:
         elemSize = 3 * sizeof(float);
-        // falcorFormat = ResourceFormat::RGBA32Float; YANN
         falcorFormat = ResourceFormat::RGB32Float;
         break;
     case OPTIX_PIXEL_FORMAT_FLOAT2:
@@ -201,7 +200,6 @@ void OptixDenoiserPass::freeStagingBuffer(Interop& interop, OptixImage2D& image)
 
 void OptixDenoiserPass::render(RenderContext* pRenderContext)
 {
-    // YANN valider pRenderContext is the same
     FALCOR_PROFILE(pRenderContext, "OptixDenoiserPass::render");
 
     const uint2 bufferSize = uint2(mWidth, mHeight);
