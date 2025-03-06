@@ -32,6 +32,7 @@ It is necessary since git doesnt allow me to push file that are greater than 100
 - Run the **setup_vs2022.bat** script after cloning this repository. The solution files are written to build/windows-vs2022 and the binary output is located in build/windows-vs2022/bin.  
 - Open the **Falcor.sln** solution
 - Set **Samples/Restir** as your startup project
+- Set your configuration to **Release**(Unless you are debbuging)  
 - Build and run
 
 ## Test scenes
