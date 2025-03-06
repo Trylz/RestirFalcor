@@ -27,7 +27,7 @@ Run the **setup_vs2022.bat** script after cloning this repository. The solution 
 
 ## Test scenes
 Two test scenes are provided. The Arcade scene that ships with Falcor and the DragonBuddha scene.  
-To switch scene simply change the **SCENE_NAME** define  inside RestirApp.cpp file
+To switch scene simply change the **SCENE_NAME** define  inside RestirApp.cpp file  
 0: Arcade scene  
 1: Dragon buddha scene.
 
