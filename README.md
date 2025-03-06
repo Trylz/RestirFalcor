@@ -1,7 +1,8 @@
 # Restir Falcor
 
 This repository host my implementation of the Restir algorithm inside Nvidia Falcor framework.
-![restir_teaser](https://github.com/user-attachments/assets/7bc00960-7177-47bd-b570-993f8274dc3b)
+![restir_teaser](https://github.com/user-attachments/assets/bed93be9-06fa-46ae-be38-283715dafe30)
+
 
 # How to test
 
@@ -43,10 +44,10 @@ Reservoirs are managed by the reservoir manager. See ReservoirManager.cpp.
 Lights are managed by the light manager. See LightManager.cpp.  
 This is where lights are created for each scene.  
 Right now only spherical so area lights are supported.
+![AeraLightsPNG](https://github.com/user-attachments/assets/092bba21-114f-438b-9f6b-09b36b451a47)
+![AeraLights_CloseUp](https://github.com/user-attachments/assets/d50d26fb-47a8-40f8-bf72-5d98b735f511)
 
-![AeraLightsPNG](https://github.com/user-attachments/assets/46d7662b-b1f5-4cbb-85e4-1747567e166b)
 
-![AeraLights_CloseUp](https://github.com/user-attachments/assets/4d3ced30-e7da-4a77-aa9c-6cd644fe4f55)
 
 ## Settings
 Scenes specific tweaks are available stored in the SceneSettings struct.  
