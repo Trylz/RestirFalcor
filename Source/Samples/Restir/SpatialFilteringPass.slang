@@ -50,7 +50,7 @@ RWTexture2D<float4> gSpecular;
         for (uint i = 0u; i < 5u; ++i)
         {
             // See https://github.com/lindayukeyi/ReSTIR_DX12/blob/main/ReSTIR/Data/shaders/spatialReuse.hlsl
-            const float radius = sqrt(sampleNext1D(rng)) * 16.0f;
+            const float radius = sqrt(sampleNext1D(rng)) * 30.0f;
             const float theta = 2.0f * 3.14159265f * sampleNext1D(rng);
             float2 neighborf = pixel.xy;
             neighborf.x += radius * cos(theta);
@@ -61,8 +61,18 @@ RWTexture2D<float4> gSpecular;
                 continue;
             }
 
-            const uint2 neighborPos = (uint2)neighborf;
-            const uint neighborPixelLinearIndex = neighborPos.y * viewportDims.x + neighborPos.x;
+            const uint2 neighborPixelPos = (uint2)neighborf;
+            const float3 neighborN = gNormalWs[neighborPixelPos].xyz;
+            if (length(neighborN - currN) > spatialNormalThreshold)
+            {
+                continue;
+            }
+
+            const float3 neighborP = gPositionWs[neighborPixelPos].xyz;
+            if (length(neighborP - currP) > spatialWsRadiusThreshold)
+                return;
+
+            const uint neighborPixelLinearIndex = neighborPixelPos.y * viewportDims.x + neighborPixelPos.x;
             const uint neighborPixelReservoirsStart = neighborPixelLinearIndex * nbReservoirPerPixel;
 
             const RestirReservoir neighborReservoir = gCurrentFrameReservoirs[neighborPixelReservoirsStart + reservoirLocalIdx];

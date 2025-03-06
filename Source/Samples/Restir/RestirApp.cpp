@@ -17,8 +17,8 @@ FALCOR_EXPORT_D3D12_AGILITY_SDK
 // WE WANT TO USE TEMPORAL FILTERING
 #define TEMPORAL_FILTERING 1
 
-// WE DONT WANT TO USE SPATIAL FILTERING
-#define SPATIAL_FILTERING 0
+// WE WANT TO USE SPATIAL FILTERING
+#define SPATIAL_FILTERING 1
 
 #if SCENE_NAME == 0
 static const std::string kScenePath = "Arcade/Arcade.pyscene";
@@ -192,12 +192,12 @@ void RestirApp::render(RenderContext* pRenderContext, const ref<Fbo>& pTargetFbo
     mpRISPass->render(pRenderContext, mpCamera);
     mpVisibilityPass->render(pRenderContext);
 
-#if TEMPORAL_FILTERING
-    mpTemporalFilteringPass->render(pRenderContext);
-#endif
-
 #if SPATIAL_FILTERING
     mpSpatialFilteringPass->render(pRenderContext);
+#endif
+
+#if TEMPORAL_FILTERING
+    mpTemporalFilteringPass->render(pRenderContext);
 #endif
 
     mpShadingPass->render(pRenderContext, mpCamera);
