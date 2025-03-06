@@ -70,7 +70,9 @@ RWTexture2D<float4> gSpecular;
 
             const float3 neighborP = gPositionWs[neighborPixelPos].xyz;
             if (length(neighborP - currP) > spatialWsRadiusThreshold)
-                return;
+            {
+                continue;
+            }
 
             const uint neighborPixelLinearIndex = neighborPixelPos.y * viewportDims.x + neighborPixelPos.x;
             const uint neighborPixelReservoirsStart = neighborPixelLinearIndex * nbReservoirPerPixel;
