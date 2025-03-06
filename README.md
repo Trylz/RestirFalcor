@@ -2,7 +2,8 @@
 
 This repository host an implementation of the Restir algorithm inside Nvidia Falcor framework.
 ![restir_teaser](https://github.com/user-attachments/assets/e2757806-ed91-4eab-91fd-16b60cdad4f5)
-Showcase: https://www.youtube.com/watch?v=jiP2zfzdDog
+Showcase: https://www.youtube.com/watch?v=jiP2zfzdDog  
+
 Source code: https://github.com/Trylz/RestirFalcor/tree/master/Source/Samples/Restir  
 
 Here the original paper:  
