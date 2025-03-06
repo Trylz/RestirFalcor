@@ -29,7 +29,10 @@ It is necessary since git doesnt allow me to push file that are greater than 100
 - NVIDIA driver 466.11 or newer
 
 ## Building Restir Falcor
-Run the **setup_vs2022.bat** script after cloning this repository. The solution files are written to build/windows-vs2022 and the binary output is located in build/windows-vs2022/bin.
+- Run the **setup_vs2022.bat** script after cloning this repository. The solution files are written to build/windows-vs2022 and the binary output is located in build/windows-vs2022/bin.  
+- Open the Falcor.sln solution
+- Set Samples/Restir as your startup project
+- Build and run
 
 ## Test scenes
 Two test scenes are provided. The Arcade scene that ships with Falcor and the DragonBuddha scene.  
