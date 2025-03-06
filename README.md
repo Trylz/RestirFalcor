@@ -95,4 +95,5 @@ This is work in progress and some artefacts are still visible.
 
 
 ### Flickering on the buddha of the dragon buddha scene when camera motion.
-https://youtu.be/wGGd2VHuTtU
+https://youtu.be/wGGd2VHuTtU  
+Increasing the number of reservoir per pixels helps but it kills performance. The scene has three lights so theorically no more than 3 reservoirs should be necessary.
