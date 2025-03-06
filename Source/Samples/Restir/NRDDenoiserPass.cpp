@@ -398,8 +398,6 @@ void NRDDenoiserPass::unpackNRD(Falcor::RenderContext* pRenderContext)
 
 void NRDDenoiserPass::render(Falcor::RenderContext* pRenderContext)
 {
-    FALCOR_ASSERT(pRenderContext == mpRenderContext);
-
     FALCOR_PROFILE(pRenderContext, "DenoisingPass::render");
 
     packNRD(pRenderContext);
