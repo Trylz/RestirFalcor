@@ -62,7 +62,7 @@ Scenes specific tweaks are available stored in the *SceneSettings* struct.
 Resampled Importance Sampling is performed as described in paper.
 
 ### Visibility test
-For each reservoir its weight is set to zero if occluded.
+For each reservoir its weight is set to zero if occluded. So raytracing is performed here.
 
 ### Temporal filtering 
 We combine the current frame reservoirs with thoses of the previous frame
