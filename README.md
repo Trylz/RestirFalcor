@@ -1,7 +1,10 @@
 # Restir Falcor
 
-This repository host my implementation of the Restir algorithm inside Nvidia Falcor framework.
-![restir_teaser](https://github.com/user-attachments/assets/7bc00960-7177-47bd-b570-993f8274dc3b)
+This repository host an implementation of the Restir algorithm inside Nvidia Falcor framework.
+![restir_teaser](https://github.com/user-attachments/assets/e2757806-ed91-4eab-91fd-16b60cdad4f5)
+
+Here the original paper:  
+https://research.nvidia.com/sites/default/files/pubs/2020-07_Spatiotemporal-reservoir-resampling/ReSTIR.pdf
 
 # How to test
 
@@ -43,10 +46,10 @@ Reservoirs are managed by the reservoir manager. See ReservoirManager.cpp.
 Lights are managed by the light manager. See LightManager.cpp.  
 This is where lights are created for each scene.  
 Right now only spherical so area lights are supported.
+![AeraLightsPNG](https://github.com/user-attachments/assets/092bba21-114f-438b-9f6b-09b36b451a47)
+![AeraLights_CloseUp](https://github.com/user-attachments/assets/d50d26fb-47a8-40f8-bf72-5d98b735f511)
 
-![AeraLightsPNG](https://github.com/user-attachments/assets/46d7662b-b1f5-4cbb-85e4-1747567e166b)
 
-![AeraLights_CloseUp](https://github.com/user-attachments/assets/4d3ced30-e7da-4a77-aa9c-6cd644fe4f55)
 
 ## Settings
 Scenes specific tweaks are available stored in the SceneSettings struct.  
@@ -85,7 +88,7 @@ It is not recommended when i read the doc. So we ewant to denoise the reservoirs
 This is work in progress and some artefacts are still visible.
 
 ### Noise on the Arcade scene floor
-![Arcade_Floor](https://github.com/user-attachments/assets/113ace92-15a0-4d0a-af7c-81bb1ae930df)
+![Arcade_Noise](https://github.com/user-attachments/assets/f9cee9fe-40d5-47cb-bc63-540f0a099dab)
 
 
 ### Flickering on the buddha of the dragon buddha scene when camera motion.
