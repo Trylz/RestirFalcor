@@ -15,10 +15,13 @@ FALCOR_EXPORT_D3D12_AGILITY_SDK
 #define SCENE_NAME 1
 
 // WE WANT TO USE TEMPORAL FILTERING
-#define TEMPORAL_FILTERING 1
+#define USE_TEMPORAL_FILTERING 1
 
 // WE DONT WANT TO USE SPATIAL FILTERING
-#define SPATIAL_FILTERING 0
+#define USE_SPATIAL_FILTERING 0
+
+// WE WANT TO USE DENOISING
+#define USE_DENOISING 1
 
 #if SCENE_NAME == 0
 static const std::string kScenePath = "Arcade/Arcade.pyscene";
@@ -154,18 +157,19 @@ void RestirApp::loadScene(const std::string& path, const Fbo* pTargetFbo, Render
     mpRISPass = new Restir::RISPass(getDevice(), pTargetFbo->getWidth(), pTargetFbo->getHeight());
     mpVisibilityPass = new Restir::VisibilityPass(getDevice(), mpScene, pTargetFbo->getWidth(), pTargetFbo->getHeight());
 
-#if TEMPORAL_FILTERING
+#if USE_TEMPORAL_FILTERING
     mpTemporalFilteringPass =
         new Restir::TemporalFilteringPass(getDevice(), mpScene, kSceneName, pTargetFbo->getWidth(), pTargetFbo->getHeight());
 #endif
 
-#if SPATIAL_FILTERING
+#if USE_SPATIAL_FILTERING
     mpSpatialFilteringPass = new Restir::SpatialFilteringPass(getDevice(), mpScene, pTargetFbo->getWidth(), pTargetFbo->getHeight());
 #endif
 
     mpShadingPass = new Restir::ShadingPass(getDevice(), pTargetFbo->getWidth(), pTargetFbo->getHeight());
 
-#if DENOISING_USE_NRD
+#if USE_DENOISING
+#if DENOISING_NRD
     mpDenoisingPass = new Restir::NRDDenoiserPass(
         getDevice(), pRenderContext, mpScene, mpShadingPass->getOuputTexture(), pTargetFbo->getWidth(), pTargetFbo->getHeight()
     );
@@ -173,6 +177,7 @@ void RestirApp::loadScene(const std::string& path, const Fbo* pTargetFbo, Render
     mpDenoisingPass = new Restir::OptixDenoiserPass(
         getDevice(), mpScene, pRenderContext, mpShadingPass->getOuputTexture(), pTargetFbo->getWidth(), pTargetFbo->getHeight()
     );
+#endif
 #endif
 }
 
@@ -192,18 +197,22 @@ void RestirApp::render(RenderContext* pRenderContext, const ref<Fbo>& pTargetFbo
     mpRISPass->render(pRenderContext, mpCamera);
     mpVisibilityPass->render(pRenderContext);
 
-#if TEMPORAL_FILTERING
+#if USE_TEMPORAL_FILTERING
     mpTemporalFilteringPass->render(pRenderContext);
 #endif
 
-#if SPATIAL_FILTERING
+#if USE_SPATIAL_FILTERING
     mpSpatialFilteringPass->render(pRenderContext);
 #endif
 
     mpShadingPass->render(pRenderContext, mpCamera);
-    mpDenoisingPass->render(pRenderContext);
 
+#if USE_DENOISING
+    mpDenoisingPass->render(pRenderContext);
     pRenderContext->blit(mpDenoisingPass->getOuputTexture()->getSRV(), pTargetFbo->getRenderTargetView(0));
+#else
+    pRenderContext->blit(mpShadingPass->getOuputTexture()->getSRV(), pTargetFbo->getRenderTargetView(0));
+#endif
 
     Restir::GBufferSingleton::instance()->setNextFrame();
     Restir::ReservoirManagerSingleton::instance()->setNextFrame();

@@ -13,7 +13,7 @@
 
 using namespace Falcor;
 
-#define DENOISING_USE_NRD 0
+#define DENOISING_NRD 0
 
 class RestirApp : public SampleApp
 {
@@ -41,10 +41,9 @@ private:
     Restir::TemporalFilteringPass* mpTemporalFilteringPass = nullptr;
     Restir::SpatialFilteringPass* mpSpatialFilteringPass = nullptr;
 
-#if DENOISING_USE_NRD
+#if DENOISING_NRD
     Restir::NRDDenoiserPass* mpDenoisingPass = nullptr;
 #else
     Restir::OptixDenoiserPass* mpDenoisingPass = nullptr;
 #endif
 };
-
