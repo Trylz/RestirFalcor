@@ -88,7 +88,7 @@ It is not recommended when i read the doc. So we ewant to denoise the reservoirs
 This is work in progress and some artefacts are still visible.
 
 ### Noise on the Arcade scene floor
-![Arcade_Floor](https://github.com/user-attachments/assets/113ace92-15a0-4d0a-af7c-81bb1ae930df)
+![Arcade_Noise](https://github.com/user-attachments/assets/f9cee9fe-40d5-47cb-bc63-540f0a099dab)
 
 
 ### Flickering on the buddha of the dragon buddha scene when camera motion.
