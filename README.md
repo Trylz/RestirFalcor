@@ -1,8 +1,10 @@
 # Restir Falcor
 
 This repository host my implementation of the Restir algorithm inside Nvidia Falcor framework.
-![restir_teaser](https://github.com/user-attachments/assets/bed93be9-06fa-46ae-be38-283715dafe30)
+![restir_teaser](https://github.com/user-attachments/assets/e2757806-ed91-4eab-91fd-16b60cdad4f5)
 
+Here the original paper:  
+https://research.nvidia.com/sites/default/files/pubs/2020-07_Spatiotemporal-reservoir-resampling/ReSTIR.pdf
 
 # How to test
 
