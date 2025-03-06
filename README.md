@@ -112,6 +112,6 @@ This is work in progress and some artefacts are still visible.
 
 ### Light flickering on the buddha of the dragon buddha scene when camera motion.
 https://youtu.be/Traf3cYggXs  
-Increasing the number of reservoir per pixels helps but it kills performance. The scene has three lights so theorically no more than 3 reservoirs should be necessary. Or not since we are using area lights ;)  
+Increasing the number of reservoir per pixels helps but it kills performance. The scene has three lights so theorically no more than 3 reservoirs/pixel should be necessary. Or not since we are using area lights ;)  
 **This is definitely happening because the temporal filtering pass doesnt do a good job enough**. See TemporalFilteringPass.slang.  
 You can clearly see the glitch when turning Denoising OFF(#define USE_DENOISING 0)
