@@ -18,7 +18,7 @@ It is necessary since git doesnt allow me to push file that are greater than 100
 
 ## Building prerequisites
 - Windows 10 version 20H2 (October 2020 Update) or newer, OS build revision .789 or newer
-- Visual Studio 2022 or newer
+- Visual Studio 2022
 - Cmake
 - [Windows 10 SDK (10.0.19041.0) for Windows 10, version 2004](https://developer.microsoft.com/en-us/windows/downloads/windows-10-sdk/)
 - Cuda toolkit installed. Right now 12.6(https://developer.nvidia.com/cuda-12-6-0-download-archive) is hardcoded
