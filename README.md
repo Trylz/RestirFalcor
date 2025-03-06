@@ -3,6 +3,7 @@
 This repository host an implementation of the Restir algorithm inside Nvidia Falcor framework.
 ![restir_teaser](https://github.com/user-attachments/assets/e2757806-ed91-4eab-91fd-16b60cdad4f5)
 Showcase: https://www.youtube.com/watch?v=jiP2zfzdDog
+Source code: https://github.com/Trylz/RestirFalcor/tree/master/Source/Samples/Restir  
 
 Here the original paper:  
 https://research.nvidia.com/sites/default/files/pubs/2020-07_Spatiotemporal-reservoir-resampling/ReSTIR.pdf
@@ -60,13 +61,13 @@ Scenes specific tweaks are available stored in the *SceneSettings* struct.
 
 ## Render passes
 ### RIS
-Resampled Importance Sampling is performed as described in paper.
+Resampled Importance Sampling is performed as described in paper. See RISPass.cpp
 
 ### Visibility test
-For each reservoir its weight is set to zero if occluded. So raytracing is performed here.
+For each reservoir its weight is set to zero if occluded. So raytracing is performed here. See VisibilityPass.cpp
 
 ### Temporal filtering 
-We combine the current frame reservoirs with thoses of the previous frame
+We combine the current frame reservoirs with thoses of the previous frame. See TemporalFilteringPass.cpp
 
 Here the dragon buddha scene with temporal filtering ON and OFF
 
@@ -78,7 +79,8 @@ https://youtu.be/iBL5fuxIujA
 
 ### Spatial filtering 
 Combine each pixel reservoirs with thoses of its neighboords. This is disabled by default since it give me strange resulsts.  
-#define SPATIAL_FILTERING 0
+#define SPATIAL_FILTERING 0  
+See SpatialFilteringPass.cpp
 
 ### Denoising
 
@@ -87,6 +89,8 @@ Denoising can be done using NRD or Optix denoiser
 
 Note that NRD is currently performed on the final image(same for Optix).
 It is not recommended when i read the doc. So we may want to denoise the reservoirs instead. This is work in progress see: NRDDenoiserPass_MultipleNrd_WIP.cpp
+
+### Shading
 
 # ISSUES
 This is work in progress and some artefacts are still visible.
