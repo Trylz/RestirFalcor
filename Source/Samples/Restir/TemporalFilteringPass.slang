@@ -10,7 +10,7 @@ cbuffer PerFrameCB
     float4x4 previousFrameViewProjMat;
     uint nbReservoirPerPixel;
     uint sampleIndex;
-    uint motion;// Maybe we wont need this is denoising does a great job
+    uint motion;
     float temporalWsRadiusThreshold;
     float temporalNormalThreshold;
 };

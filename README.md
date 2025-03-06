@@ -1,6 +1,6 @@
 # Restir Falcor
 
-This repository host an implementation of the Restir algorithm inside Nvidia Falcor framework.
+This repository host an implementation of the Restir algorithm inside Nvidia Falcor 8.0.
 ![restir_teaser](https://github.com/user-attachments/assets/e2757806-ed91-4eab-91fd-16b60cdad4f5)
 Showcase: https://www.youtube.com/watch?v=jiP2zfzdDog  
 
@@ -92,7 +92,7 @@ See SpatialFilteringPass.cpp
 
 ### Shading
 
-Shading is performed using the reservoir from the previous passes.
+Shading is performed using the reservoir from the previous passes. See ShadingPass.cpp.
 
 ### Denoising
 **#define USE_DENOISING 1**
