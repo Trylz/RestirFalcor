@@ -84,13 +84,13 @@ https://youtu.be/iBL5fuxIujA
 
 ### Spatial filtering 
 Combine each pixel reservoirs with thoses of its neighboords. This is disabled by default since it give me strange resulsts.  
-#define SPATIAL_FILTERING 0  
+**#define SPATIAL_FILTERING 0**  
 See SpatialFilteringPass.cpp
 
 ### Denoising
 
 Denoising can be done using NRD or Optix denoiser  
-#define DENOISING_USE_NRD 0  
+**#define DENOISING_USE_NRD 0**  
 
 Note that NRD is currently performed on the final image(same for Optix).
 It is not recommended when i read the doc. So we may want to denoise the reservoirs instead. This is work in progress see: NRDDenoiserPass_MultipleNrd_WIP.cpp
@@ -106,4 +106,4 @@ This is work in progress and some artefacts are still visible.
 
 ### Flickering on the buddha of the dragon buddha scene when camera motion.
 https://youtu.be/wGGd2VHuTtU  
-Increasing the number of reservoir per pixels helps but it kills performance. The scene has three lights so theorically no more than 3 reservoirs should be necessary.
+Increasing the number of reservoir per pixels helps but it kills performance. The scene has three lights so theorically no more than 3 reservoirs should be necessary. Or not since we are using area lights ;)
