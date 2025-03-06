@@ -9,9 +9,9 @@ https://research.nvidia.com/sites/default/files/pubs/2020-07_Spatiotemporal-rese
 # How to test
 
 ## Grab necessary assets
-First grab the dragon buddha moded has explained here:
-https://github.com/Trylz/FalcorRestir/tree/master/TestScenes/DragonBuddha
-Necessary since git doesnt allow me to push file that are greater than 100 MB.
+First grab the dragon buddha model has explained here:
+https://github.com/Trylz/RestirFalcor/blob/master/TestScenes/DragonBuddha/README.txt  
+It is necessary since git doesnt allow me to push file that are greater than 100 MB.
 
 ## Building prerequisites
 - Windows 10 version 20H2 (October 2020 Update) or newer, OS build revision .789 or newer
@@ -25,19 +25,19 @@ Necessary since git doesnt allow me to push file that are greater than 100 MB.
 ## Building Restir Falcor
 Run the setup_vs2022.bat script after cloning this repository. The solution files are written to build/windows-vs2022 and the binary output is located in build/windows-vs2022/bin.
 
-
 ## Test scenes
 Two test scenes are provided. The Arcade scene that ships with Falcor and the DragonBuddha scene.  
-To switch scene simply change the SCENE_NAME define  
+To switch scene simply change the **SCENE_NAME** define  inside RestirApp.cpp file
 0: Arcade scene  
-1: Dragon baddha scene.
+1: Dragon buddha scene.
 
 
 # Code overview
-
+Restir source code is located here  
+https://github.com/Trylz/RestirFalcor/tree/master/Source/Samples/Restir
 
 ## Application entry point
-The appplication entry point is located in the RestirApp.cpp file
+The application entry point is located in the RestirApp.cpp file
 
 ## Reservoirs
 Reservoirs are managed by the reservoir manager. See ReservoirManager.cpp.
@@ -45,24 +45,24 @@ Reservoirs are managed by the reservoir manager. See ReservoirManager.cpp.
 ## Lights
 Lights are managed by the light manager. See LightManager.cpp.  
 This is where lights are created for each scene.  
-Right now only spherical so area lights are supported.
+Right now only spherical(so area) lights are supported.
 ![AeraLightsPNG](https://github.com/user-attachments/assets/092bba21-114f-438b-9f6b-09b36b451a47)
 ![AeraLights_CloseUp](https://github.com/user-attachments/assets/d50d26fb-47a8-40f8-bf72-5d98b735f511)
 
 
 
 ## Settings
-Scenes specific tweaks are available stored in the SceneSettings struct.  
+Scenes specific tweaks are available stored in the *SceneSettings* struct.  
 
 ## Render passes
 ### RIS
-RIS is computed using as described in paper
+Resampled Importance Sampling is performed as described in paper.
 
 ### Visibility test
-For each reservoir its weight is set to xzero if occluded
+For each reservoir its weight is set to zero if occluded.
 
 ### Temporal filtering 
-We combine the current frame reservoirs with thoses of th eprevious frame
+We combine the current frame reservoirs with thoses of the previous frame
 
 Here the dragon buddha scene with temporal filtering ON and OFF
 
@@ -81,8 +81,8 @@ Combine each pixel reservoirs with thoses of its neighboords. This is disabled b
 Denoising can be done using NRD or Optix denoiser
 #define DENOISING_USE_NRD 0
 
-Note that NRD is currently performaned on the final image(same for Optix).
-It is not recommended when i read the doc. So we ewant to denoise the reservoirs insteead. This is work in progress see: NRDDenoiserPass_MultipleNrd_WIP.cpp
+Note that NRD is currently performed on the final image(same for Optix).
+It is not recommended when i read the doc. So we may want to denoise the reservoirs instead. This is work in progress see: NRDDenoiserPass_MultipleNrd_WIP.cpp
 
 # ISSUES
 This is work in progress and some artefacts are still visible.
