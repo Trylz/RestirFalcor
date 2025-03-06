@@ -83,9 +83,13 @@ OFF:
 https://youtu.be/iBL5fuxIujA
 
 ### Spatial filtering 
-Combine each pixel reservoirs with thoses of its neighboords. This is disabled by default since it give me strange resulsts.  
+Combine each pixel reservoirs with thoses of its neighbors. This is disabled by default since it give me strange results.  
 **#define SPATIAL_FILTERING 0**  
 See SpatialFilteringPass.cpp
+
+### Shading
+
+Shading is performed using the reservoir from the previous passes.
 
 ### Denoising
 
@@ -94,8 +98,6 @@ Denoising can be done using NRD or Optix denoiser
 
 Note that NRD is currently performed on the final image(same for Optix).
 It is not recommended when i read the doc. So we may want to denoise the reservoirs instead. This is work in progress see: NRDDenoiserPass_MultipleNrd_WIP.cpp
-
-### Shading
 
 # ISSUES
 This is work in progress and some artefacts are still visible.
