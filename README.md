@@ -78,8 +78,8 @@ Combine each pixel reservoirs with thoses of its neighboords. This is disabled b
 
 ### Denoising
 
-Denoising can be done using NRD or Optix denoiser
-#define DENOISING_USE_NRD 0
+Denoising can be done using NRD or Optix denoiser  
+#define DENOISING_USE_NRD 0  
 
 Note that NRD is currently performed on the final image(same for Optix).
 It is not recommended when i read the doc. So we may want to denoise the reservoirs instead. This is work in progress see: NRDDenoiserPass_MultipleNrd_WIP.cpp
