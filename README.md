@@ -1,6 +1,6 @@
 # Restir Falcor
 
-This repository host my implementation of the Restir algorithm inside Nvidia Falcor framework.
+This repository host an implementation of the Restir algorithm inside Nvidia Falcor framework.
 ![restir_teaser](https://github.com/user-attachments/assets/e2757806-ed91-4eab-91fd-16b60cdad4f5)
 
 Here the original paper:  
