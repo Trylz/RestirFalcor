@@ -44,6 +44,7 @@ void TemporalFilteringPass::render(Falcor::RenderContext* pRenderContext)
     var["gCurrentNormalWs"] = GBufferSingleton::instance()->getCurrentNormalWsTexture();
     var["gPreviousNormalWs"] = GBufferSingleton::instance()->getPreviousNormalWsTexture();
     var["gAlbedo"] = GBufferSingleton::instance()->getAlbedoTexture();
+
     var["gSpecular"] = GBufferSingleton::instance()->getSpecularTexture();
 
     mpTemporalFilteringPass->execute(pRenderContext, mWidth, mHeight);

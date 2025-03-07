@@ -36,7 +36,6 @@ int2 getPreviousFramePixelPos(float4 P, float width, float height)
     return (int2)(s * float2(width, height));
 }
 
-
 // Compares two values and returns true if their relative difference is lower than the threshold.
 // Zero or negative threshold makes test always succeed, not fail.
 bool RTXDI_CompareRelativeDifference(float reference, float candidate, float threshold)
@@ -52,7 +51,6 @@ bool RTXDI_IsValidNeighbor(float3 ourNorm, float3 theirNorm, float ourDepth, flo
         && RTXDI_CompareRelativeDifference(ourDepth, theirDepth, depthThreshold);
 }
 
-
 [numthreads(16, 16, 1)] void TemporalFilteringPass(uint3 threadId
                                         : SV_DispatchThreadID)
 {
@@ -64,14 +62,6 @@ bool RTXDI_IsValidNeighbor(float3 ourNorm, float3 theirNorm, float ourDepth, flo
         return;
 
     const float3 currP = gCurrentPositionWs[pixel].xyz;
-
-
-    const int2 previousPixelPos = getPreviousFramePixelPos(float4(currP, 1.0f), (float)viewportDims.x, (float)viewportDims.y);
- 
-    if (gPreviousPositionWs[previousPixelPos].w == 0.0f)
-        return;
-
-
     const float3 currN = gCurrentNormalWs[pixel].xyz;
     const float3 V = normalize(currP - cameraPositionWs);
     const float3 diffuse = gAlbedo[pixel].xyz;
@@ -79,22 +69,23 @@ bool RTXDI_IsValidNeighbor(float3 ourNorm, float3 theirNorm, float ourDepth, flo
     const float roughness = gSpecular[pixel].w;
     const float currlinearDepth = gCurrentNormalWs[pixel].w;
 
+    // The previous pixel cposition for this worldspace coordinate.
+    const int2 previousPixelPos = getPreviousFramePixelPos(float4(currP, 1.0f), (float)viewportDims.x, (float)viewportDims.y);
+
     // Current pixel
     const uint currentPixelLinearIndex = pixel.y * viewportDims.x + pixel.x;
     const uint currentPixelReservoirsStart = currentPixelLinearIndex * nbReservoirPerPixel;
 
+    // Init the random number generator.
     TinyUniformSampleGenerator rng = TinyUniformSampleGenerator(pixel.xy, sampleIndex);
 
     for (uint reservoirLocalIdx = 0u; reservoirLocalIdx < nbReservoirPerPixel; ++reservoirLocalIdx)
     {
-        const RestirReservoir currentReservoir = gCurrentFrameReservoirs[currentPixelReservoirsStart + reservoirLocalIdx];
-
         // Find a temporal surface
         RestirReservoir temporalNeighborReservoir;
         initReservoir(temporalNeighborReservoir);
 
-        bool foundTemporalSurface = false;
-        const float temporalSearchRadius = 16.0f; 
+        const float temporalSearchRadius = 8.0f; // Maybe use a % of viewportDims?
 
         // Try to find a matching surface in the neighborhood of the centrol reprojected pixel
         // See https://github.com/NVIDIA-RTX/RTXDI-Library/blob/26a6c715aefbc4056954bd1c7e537b8a9ef8984c/Include/Rtxdi/DI/SpatioTemporalResampling.hlsli
@@ -121,7 +112,7 @@ bool RTXDI_IsValidNeighbor(float3 ourNorm, float3 theirNorm, float ourDepth, flo
                 continue;
 
             const float3 prevN = gPreviousNormalWs[centralIdx].xyz;
-            const float prevlinearDepth = currlinearDepth[pixel].w;
+            const float prevlinearDepth = gPreviousNormalWs[pixel].w;
 
             if (!RTXDI_IsValidNeighbor(
                 currN, prevN,
@@ -137,29 +128,19 @@ bool RTXDI_IsValidNeighbor(float3 ourNorm, float3 theirNorm, float ourDepth, flo
             break;
         }
 
+        const RestirReservoir currentPixelReservoir = gCurrentFrameReservoirs[currentPixelReservoirsStart + reservoirLocalIdx];
+
         if (temporalNeighborReservoir.m_W > 0.0f)
+            // Maybe we dont need the check since reservoir weight will be zero.
         {
             if (motion > 0)
             {
                 // Clamp M according to paper.
-                temporalNeighborReservoir.mM = min(20 * currentReservoir.mM, temporalNeighborReservoir.mM);
+                temporalNeighborReservoir.mM = min(20 * currentPixelReservoir.mM, temporalNeighborReservoir.mM);
             }
 
-            // Maybe we dont need the check since reservoir weight will be zero.
-            gCurrentFrameReservoirs[currentPixelReservoirsStart + i] = combineReservoirs(currentReservoir, temporalNeighborReservoir, currP, currN, V, diffuse, specular, roughness, rng);;
+            gCurrentFrameReservoirs[currentPixelReservoirsStart + reservoirLocalIdx] = combineReservoirs(currentPixelReservoir, temporalNeighborReservoir, currP, currN, V, diffuse, specular, roughness, rng);;
         }
-/*
-
-
-
-
-        RestirReservoir previousReservoir = gPreviousFrameReservoirs[previousPixelReservoirsStart + i];
-        if (motion > 0)
-        {
-            // Clamp M according to paper.
-            previousReservoir.mM = min(10 * currentReservoir.mM, previousReservoir.mM);
-        }
-*/
     }
 }
 
