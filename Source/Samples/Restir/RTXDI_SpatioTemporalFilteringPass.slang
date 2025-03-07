@@ -8,6 +8,7 @@ cbuffer PerFrameCB
     uint2 viewportDims;
     float3 cameraPositionWs;
     float4x4 previousFrameViewProjMat;
+    float4x4 currentFrameViewProjMat;
     uint nbReservoirPerPixel;
     uint sampleIndex;
     uint motion;
@@ -95,13 +96,13 @@ struct RTXDI_DISpatioTemporalResamplingParameters
     bool enablePermutationSampling;
 
     // Enables the comparison of surface materials before taking a surface into resampling.
-    bool enableMaterialSimilarityTest;
+   // bool enableMaterialSimilarityTest;
 
     // Prevents samples which are from the current frame or have no reasonable temporal history merged being spread to neighbors
     bool discountNaiveSamples;
 
     // Random number for permutation sampling that is the same for all pixels in the frame
-    uint uniformRandomNumber;
+   // uint uniformRandomNumber;
 };
 
 RestirReservoir RTXDI_DISpatioTemporalResamplingWithPairwiseMIS(
@@ -117,6 +118,13 @@ RestirReservoir RTXDI_DISpatioTemporalResamplingWithPairwiseMIS(
     inout TinyUniformSampleGenerator rng
 )
 {
+    const uint historyLimit = min(0x3fff, uint(stparams.maxHistoryLength * curSample.mM));
+
+    float3 motion = stparams.screenSpaceMotion;
+    //if (!stparams.enablePermutationSampling)
+    {
+        motion.xy += float2(RAB_GetNextRandom(rng), RAB_GetNextRandom(rng)) - 0.5f;
+    }
 
 }
 
@@ -164,7 +172,7 @@ RestirReservoir RTXDI_DISpatioTemporalResamplingWithPairwiseMIS(
         stparams.numDisocclusionBoostSamples = 0;
         stparams.samplingRadius = 32;
         stparams.enableVisibilityShortcut = true;
-        stparams.enablePermutationSampling = true;
+        stparams.enablePermutationSampling = false;//YANN
         stparams.discountNaiveSamples = false;
 
         gCurrentFrameReservoirs[currentPixelReservoirsStart + i] =
