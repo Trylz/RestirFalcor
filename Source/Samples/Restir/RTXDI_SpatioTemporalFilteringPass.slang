@@ -9,6 +9,7 @@ cbuffer PerFrameCB
     float3 cameraPositionWs;
     float4x4 previousFrameViewProjMat;
     float4x4 currentFrameViewProjMat;
+    float4x4 currentFrameViewMat;
     uint nbReservoirPerPixel;
     uint sampleIndex;
     uint motion;
@@ -123,8 +124,13 @@ RestirReservoir RTXDI_DISpatioTemporalResamplingWithPairwiseMIS(
     float3 motion = stparams.screenSpaceMotion;
     //if (!stparams.enablePermutationSampling)
     {
-        motion.xy += float2(RAB_GetNextRandom(rng), RAB_GetNextRandom(rng)) - 0.5f;
+        motion.xy += float2(sampleNext1D(rng), sampleNext1D(rng)) - 0.5f;
     }
+
+    const int2 prevPos = int2(round(float2(pixelPosition) + motion.xy));
+
+    const float expectedPrevLinearDepth = mul(P, currentFrameViewMat).z + motion.z;
+
 
 }
 
