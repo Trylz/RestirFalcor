@@ -45,7 +45,6 @@ target_sources(Restir PRIVATE
 
     GBuffer.slang
     RISPass.slang
-    RTXDI_SpatioTemporalFilteringPass.slang
     ShadingPass.slang
     TemporalFilteringPass.slang
     VisibilityPass.slang

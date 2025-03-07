@@ -53,7 +53,7 @@ void primaryClosestHit(inout PrimaryRayData hitData, BuiltInTriangleIntersection
     }
     // Write the ws normal.
     {
-        gNormalWs[launchIndex] = float4(sd.faceN, bsdfProperties.roughness);
+        gNormalWs[launchIndex] = float4(sd.faceN, hitT);
     }
 
     // Write the albedo.
