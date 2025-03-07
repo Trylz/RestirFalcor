@@ -32,7 +32,7 @@ void TemporalFilteringPass::render(Falcor::RenderContext* pRenderContext)
     var["PerFrameCB"]["sampleIndex"] = ++mSampleIndex;
     var["PerFrameCB"]["motion"] = (uint)(mPreviousFrameViewProjMat != mpScene->getCamera()->getViewProjMatrix());
 
-    var["PerFrameCB"]["temporalLinearDepthThreshold"] = SceneSettingsSingleton::instance()->temporalLinearDepthThreshold;
+    var["PerFrameCB"]["temporalWsRadiusThreshold"] = SceneSettingsSingleton::instance()->temporalWsRadiusThreshold;
     var["PerFrameCB"]["temporalNormalThreshold"] = SceneSettingsSingleton::instance()->temporalNormalThreshold;
 
     var["gCurrentFrameReservoirs"] = ReservoirManagerSingleton::instance()->getCurrentFrameReservoirBuffer();
@@ -44,7 +44,6 @@ void TemporalFilteringPass::render(Falcor::RenderContext* pRenderContext)
     var["gCurrentNormalWs"] = GBufferSingleton::instance()->getCurrentNormalWsTexture();
     var["gPreviousNormalWs"] = GBufferSingleton::instance()->getPreviousNormalWsTexture();
     var["gAlbedo"] = GBufferSingleton::instance()->getAlbedoTexture();
-
     var["gSpecular"] = GBufferSingleton::instance()->getSpecularTexture();
 
     mpTemporalFilteringPass->execute(pRenderContext, mWidth, mHeight);
