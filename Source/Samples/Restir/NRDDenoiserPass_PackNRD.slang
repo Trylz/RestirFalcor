@@ -16,6 +16,7 @@ RWTexture2D<float2> gMotionVector;
 Texture2D<float4> gPositionWs;
 Texture2D<float4> gAlbedo;
 Texture2D<float4> gNormalWs;
+Texture2D<float4> gSpecular;
 
 int2 getPreviousFramePixelPos(float4 P, float width, float height)
 {
@@ -37,7 +38,7 @@ void PackNRD(uint3 threadId: SV_DispatchThreadID)
     gRadianceHit[pixel] = RELAX_FrontEnd_PackRadianceAndHitDist(gRadianceHit[pixel].xyz, gRadianceHit[pixel].w, true);
 
     // Normal roughness
-    gNormalLinearRoughness[pixel] = NRD_FrontEnd_PackNormalAndRoughness(gNormalWs[pixel].xyz, gNormalWs[pixel].w, gAlbedo[pixel].w);
+    gNormalLinearRoughness[pixel] = NRD_FrontEnd_PackNormalAndRoughness(gNormalWs[pixel].xyz, gSpecular[pixel].w, gAlbedo[pixel].w);
 
     // View Z and MVs
     const float4 P = gPositionWs[pixel].w;

@@ -379,6 +379,7 @@ void NRDDenoiserPass::packNRD(Falcor::RenderContext* pRenderContext)
     var["gPositionWs"] = GBufferSingleton::instance()->getCurrentPositionWsTexture();
     var["gAlbedo"] = GBufferSingleton::instance()->getAlbedoTexture();
     var["gNormalWs"] = GBufferSingleton::instance()->getCurrentNormalWsTexture();
+    var["gSpecular"] = GBufferSingleton::instance()->getSpecularTexture();
 
     mpPackNRDPass->execute(pRenderContext, mWidth, mHeight);
 }
