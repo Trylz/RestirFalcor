@@ -37,7 +37,7 @@ import Utils.Math.MathHelpers;
 import Utils.Math.FormatConversion;
 __exported import Scene.Material.ShadingUtils;
 
-struct GBufferData
+struct GBufferSurface
 {
     float4 posW;
     float4 normW;
@@ -56,9 +56,9 @@ struct GBufferData
 /**
  * Helper function to prepare G-buffer data.
  */
-GBufferData prepareGBufferData(const ShadingData sd, const VertexData v, const IMaterialInstance mi, const BSDFProperties bsdfProperties)
+GBufferSurface prepareGBufferData(const ShadingData sd, const VertexData v, const IMaterialInstance mi, const BSDFProperties bsdfProperties)
 {
-    GBufferData gbuf = {};
+    GBufferSurface gbuf = {};
 
     // We store the final normal in the G-buffer but pass along the original geometric tangent and its handedness (sign) unmodified.
     // This is needed for correctly orthonormalizing the tangent frame and computing the bitangent in passes that consume the G-buffer data.

@@ -7,9 +7,13 @@ cbuffer PerFrameCB
 {
     uint2 viewportDims;
     float3 cameraPositionWs;
+
     float4x4 previousFrameViewProjMat;
     float4x4 currentFrameViewProjMat;
+
+    float4x4 previousFrameViewMat;
     float4x4 currentFrameViewMat;
+
     uint nbReservoirPerPixel;
     uint sampleIndex;
     uint motion;
@@ -37,10 +41,6 @@ int2 getPreviousFramePixelPos(float4 P, float width, float height)
     s = float2(s.x, 1.f - s.y);
     return (int2)(s * float2(width, height));
 }
-
-
-
-
 
 //------------------------------------------------------------------------------------------------------------------------------------
 //====================================================================================================================================
@@ -106,16 +106,90 @@ struct RTXDI_DISpatioTemporalResamplingParameters
    // uint uniformRandomNumber;
 };
 
+bool RTXDI_IsActiveCheckerboardPixel(uint2 pixelPosition, bool previousFrame, uint activeCheckerboardField)
+{
+    if (activeCheckerboardField == 0)
+        return true;
+
+    return ((pixelPosition.x + pixelPosition.y + int(previousFrame)) & 1) == (activeCheckerboardField & 1);
+}
+
+void RTXDI_ActivateCheckerboardPixel(inout uint2 pixelPosition, bool previousFrame, uint activeCheckerboardField)
+{
+    if (RTXDI_IsActiveCheckerboardPixel(pixelPosition, previousFrame, activeCheckerboardField))
+        return;
+
+    if (previousFrame)
+        pixelPosition.x += int(activeCheckerboardField) * 2 - 3;
+    else
+        pixelPosition.x += (pixelPosition.y & 1) != 0 ? 1 : -1;
+}
+
+struct GBufferSurface
+{
+    float4 P;
+    float3 N;
+    float3 V;
+    float3 diffuse;
+    float3 specular;
+    float roughness;
+};
+
+bool RAB_IsSurfaceValid(GBufferSurface surface)
+{
+    return surface.P.w != 0.0f;
+}
+
+GBufferSurface RAB_GetCurrentGBufferSurface(int2 pixel)
+{
+    GBufferSurface surface;
+    surface.P = gCurrentPositionWs[pixel];
+    surface.N = gCurrentNormalWs[pixel].xyz;
+    surface.V = normalize(surface.P.xyz - cameraPositionWs);
+    surface.diffuse = gAlbedo[pixel].xyz;
+    surface.specular = gSpecular[pixel].xyz;
+    data.roughness = gSpecular[pixel].w;
+
+    return data;
+}
+
+GBufferSurface RAB_GetPreviousGBufferSurface(int2 pixel)
+{
+    GBufferSurface data;
+    /*** TODOOO YANN*/
+    return data;
+}
+
+float3 RAB_GetSurfaceNormal(GBufferSurface surface)
+{
+    return surface.N;
+}
+
+float RAB_GetCurrentSurfaceLinearDepth(GBufferSurface gData)
+{
+    return mul(gData.P, currentFrameViewMat).z;
+}
+
+float RAB_GetPreviousSurfaceLinearDepth(GBufferSurface gData)
+{
+    return mul(gData.P, currentFrameViewMat).z;
+}
+
+bool RTXDI_CompareRelativeDifference(float reference, float candidate, float threshold)
+{
+    return (threshold <= 0) || abs(reference - candidate) <= threshold * max(reference, candidate);
+}
+
+bool RTXDI_IsValidNeighbor(float3 ourNorm, float3 theirNorm, float ourDepth, float theirDepth, float normalThreshold, float depthThreshold)
+{
+    return (dot(theirNorm.xyz, ourNorm.xyz) >= normalThreshold) && RTXDI_CompareRelativeDifference(ourDepth, theirDepth, depthThreshold);
+}
+
 RestirReservoir RTXDI_DISpatioTemporalResamplingWithPairwiseMIS(
     uint2 pixelPosition,
     RestirReservoir curSample,
     RTXDI_DISpatioTemporalResamplingParameters stparams,
-    float3 P,
-    float3 N,
-    float3 V,
-    float3 diffuse,
-    float3 specular,
-    float roughness,
+    GBufferSurface surface,
     inout TinyUniformSampleGenerator rng
 )
 {
@@ -129,10 +203,66 @@ RestirReservoir RTXDI_DISpatioTemporalResamplingWithPairwiseMIS(
 
     const int2 prevPos = int2(round(float2(pixelPosition) + motion.xy));
 
-    const float expectedPrevLinearDepth = mul(P, currentFrameViewMat).z + motion.z;
+    const float expectedPrevLinearDepth = RAB_GetCurrentSurfaceLinearDepth(surface) + motion.z;
+
+    const int activeCheckerboardField = 0;
+
+    // Some default initializations
+    temporalSamplePixelPos = int2(-1, -1);
+    RAB_Surface temporalSurface;
+    bool foundTemporalSurface = false;                                                // Found a valid backprojection?
+    const float temporalSearchRadius = (activeCheckerboardField == 0) ? 4 : 8; // How far to search for a match when backprojecting
+    int2 temporalSpatialOffset = int2(0, 0);
+
+    // Try to find a matching surface in the neighborhood of the centrol reprojected pixel
+    int i;
+    int2 centralIdx;
+    for (i = 0; i < 9; i++)
+    {
+        int2 offset = int2(0, 0);
+        offset.x = (i > 0) ? int((sampleNext1D(rng) - 0.5f) * temporalSearchRadius) : 0;
+        offset.y = (i > 0) ? int((sampleNext1D(rng) - 0.5f) * temporalSearchRadius) : 0;
+
+        centralIdx = prevPos + offset;
+        /*
+            if (stparams.enablePermutationSampling && i == 0)
+        {
+            RTXDI_ApplyPermutationSampling(centralIdx, stparams.uniformRandomNumber);
+        }
+
+        */
+        RTXDI_ActivateCheckerboardPixel(centralIdx, true, activeCheckerboardField);
+
+        // Grab shading / g-buffer data from last frame
+        temporalSurface = RAB_GetPreviousGBufferSurface(centralIdx);
+        if (!RAB_IsSurfaceValid(temporalSurface))
+            continue;
+
+        // Test surface similarity, discard the sample if the surface is too different.
+        if (!RTXDI_IsValidNeighbor(
+                RAB_GetSurfaceNormal(surface),
+                RAB_GetSurfaceNormal(temporalSurface),
+                expectedPrevLinearDepth,
+                RAB_GetPreviousSurfaceLinearDepth(temporalSurface),
+                stparams.normalThreshold,
+                stparams.depthThreshold
+            ))
+            continue;
+
+        temporalSpatialOffset = centralIdx - prevPos;
+        foundTemporalSurface = true;
+        break;
+    }
+
+    // How many spatial samples to use?  
 
 
-}
+
+
+
+
+
+
 
 //====================================================================================================================================
 //------------------------------------------------------------------------------------------------------------------------------------
