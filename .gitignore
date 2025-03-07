@@ -8,6 +8,9 @@
 /media
 /media_internal
 
+
+TestScenes/DragonBuddha/dragonbuddha.obj
+
 # Packman folders.
 /external/packman/
 /tools/.packman/
