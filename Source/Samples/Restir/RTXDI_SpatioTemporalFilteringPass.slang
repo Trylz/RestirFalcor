@@ -185,6 +185,23 @@ bool RTXDI_IsValidNeighbor(float3 ourNorm, float3 theirNorm, float ourDepth, flo
     return (dot(theirNorm.xyz, ourNorm.xyz) >= normalThreshold) && RTXDI_CompareRelativeDifference(ourDepth, theirDepth, depthThreshold);
 }
 
+RestirReservoir RTXDI_LoadCurrentFrameReservoir(int2 pixel, int reservoirLocalIdx)
+{
+    const uint currentPixelLinearIndex = pixel.y * viewportDims.x + pixel.x;
+    const uint currentPixelReservoirsStart = currentPixelLinearIndex * nbReservoirPerPixel;
+
+    return gCurrentFrameReservoirs[currentPixelReservoirsStart + reservoirLocalIdx];
+}
+
+RestirReservoir RTXDI_LoadPreviousFrameReservoir(int2 pixel, int reservoirLocalIdx)
+{
+    const uint currentPixelLinearIndex = pixel.y * viewportDims.x + pixel.x;
+    const uint currentPixelReservoirsStart = currentPixelLinearIndex * nbReservoirPerPixel;
+
+    return gPreviousFrameReservoirs[currentPixelReservoirsStart + reservoirLocalIdx];
+}
+
+
 RestirReservoir RTXDI_DISpatioTemporalResamplingWithPairwiseMIS(
     uint2 pixelPosition,
     RestirReservoir curSample,
