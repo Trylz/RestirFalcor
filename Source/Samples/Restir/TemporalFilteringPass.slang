@@ -11,6 +11,7 @@ cbuffer PerFrameCB
     uint nbReservoirPerPixel;
     uint sampleIndex;
     uint motion;
+    float temporalLinearDepthThreshold;
     float temporalWsRadiusThreshold;
     float temporalNormalThreshold;
 };
