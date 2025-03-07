@@ -139,6 +139,12 @@ bool RTXDI_IsValidNeighbor(float3 ourNorm, float3 theirNorm, float ourDepth, flo
 
         if (temporalNeighborReservoir.m_W > 0.0f)
         {
+            if (motion > 0)
+            {
+                // Clamp M according to paper.
+                temporalNeighborReservoir.mM = min(20 * currentReservoir.mM, temporalNeighborReservoir.mM);
+            }
+
             // Maybe we dont need the check since reservoir weight will be zero.
             gCurrentFrameReservoirs[currentPixelReservoirsStart + i] = combineReservoirs(currentReservoir, temporalNeighborReservoir, currP, currN, V, diffuse, specular, roughness, rng);;
         }

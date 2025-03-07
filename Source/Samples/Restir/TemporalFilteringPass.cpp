@@ -32,7 +32,7 @@ void TemporalFilteringPass::render(Falcor::RenderContext* pRenderContext)
     var["PerFrameCB"]["sampleIndex"] = ++mSampleIndex;
     var["PerFrameCB"]["motion"] = (uint)(mPreviousFrameViewProjMat != mpScene->getCamera()->getViewProjMatrix());
 
-    var["PerFrameCB"]["temporalWsRadiusThreshold"] = SceneSettingsSingleton::instance()->temporalWsRadiusThreshold;
+    var["PerFrameCB"]["temporalLinearDepthThreshold"] = SceneSettingsSingleton::instance()->temporalLinearDepthThreshold;
     var["PerFrameCB"]["temporalNormalThreshold"] = SceneSettingsSingleton::instance()->temporalNormalThreshold;
 
     var["gCurrentFrameReservoirs"] = ReservoirManagerSingleton::instance()->getCurrentFrameReservoirBuffer();
