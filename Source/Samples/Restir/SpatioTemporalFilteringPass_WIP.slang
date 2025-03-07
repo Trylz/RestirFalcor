@@ -12,6 +12,7 @@ cbuffer PerFrameCB
     uint sampleIndex;
     uint motion;
     float temporalLinearDepthThreshold;
+    float temporalWsRadiusThreshold;
     float temporalNormalThreshold;
 };
 
@@ -48,7 +49,7 @@ bool RTXDI_IsValidNeighbor(float3 ourNorm, float3 theirNorm, float ourDepth, flo
 }
 
 [numthreads(16, 16, 1)] void TemporalFilteringPass(uint3 threadId
-                                        : SV_DispatchThreadID)
+    : SV_DispatchThreadID)
 {
     const uint2 pixel = threadId.xy;
     if (any(pixel >= viewportDims))
@@ -104,15 +105,20 @@ bool RTXDI_IsValidNeighbor(float3 ourNorm, float3 theirNorm, float ourDepth, flo
             if (prevP.w == 0.0f)
                 continue;
 
+            if (length(prevP.xyz - currP) > temporalWsRadiusThreshold)
+                return;
+
             const float3 prevN = gPreviousNormalWs[centralIdx].xyz;
+            if (length(prevN - currN) > temporalNormalThreshold)
+                return;
+
             const float prevlinearDepth = gPreviousNormalWs[pixel].w;
 
             if (!RTXDI_IsValidNeighbor(
                 currN, prevN,
-                currlinearDepth, prevlinearDepth,
-                temporalNormalThreshold, temporalLinearDepthThreshold))// YANN not sure about this
+                prevlinearDepth, currlinearDepth,
+                temporalNormalThreshold, temporalLinearDepthThreshold))
                 continue;
-
 
             const uint centralPixelLinearIndex = centralIdx.y * viewportDims.x + centralIdx.x;
             const uint centralPixelReservoirsStart = centralPixelLinearIndex * nbReservoirPerPixel;
