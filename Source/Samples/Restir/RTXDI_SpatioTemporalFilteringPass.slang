@@ -51,7 +51,7 @@ struct RTXDI_DISpatioTemporalResamplingParameters
     float3 screenSpaceMotion;
 
     // The index of the reservoir buffer to pull the temporal samples from.
-    uint sourceBufferIndex;
+   // uint sourceBufferIndex;
 
     // Maximum history length for temporal reuse, measured in frames.
     // Higher values result in more stable and high quality sampling, at the cost of slow reaction to changes.
@@ -104,34 +104,27 @@ struct RTXDI_DISpatioTemporalResamplingParameters
     uint uniformRandomNumber;
 };
 
+RestirReservoir RTXDI_DISpatioTemporalResamplingWithPairwiseMIS(
+    uint2 pixelPosition,
+    RestirReservoir curSample,
+    RTXDI_DISpatioTemporalResamplingParameters stparams,
+    float3 P,
+    float3 N,
+    float3 V,
+    float3 diffuse,
+    float3 specular,
+    float roughness,
+    inout TinyUniformSampleGenerator rng
+)
+{
 
-
-
-
-
+}
 
 //====================================================================================================================================
 //------------------------------------------------------------------------------------------------------------------------------------
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+#define RTXDI_BIAS_CORRECTION_BASIC 1
 
 [numthreads(16, 16, 1)] void TemporalFilteringPass(uint3 threadId
                                         : SV_DispatchThreadID)
@@ -143,37 +136,15 @@ struct RTXDI_DISpatioTemporalResamplingParameters
     if (gCurrentPositionWs[pixel].w == 0.0f)
         return;
 
-    const float3 currP = gCurrentPositionWs[pixel].xyz;
-
-    int2 previousPixelPos = getPreviousFramePixelPos(float4(currP, 1.0f), (float)viewportDims.x, (float)viewportDims.y);
-    if (previousPixelPos.x < 0 || previousPixelPos.x >= (int)viewportDims.x)
-        return;
-    if (previousPixelPos.y < 0 || previousPixelPos.y >= (int)viewportDims.y)
-        return;
-    if (gPreviousPositionWs[previousPixelPos].w == 0.0f)
-        return;
-
-    const float3 prevP = gPreviousPositionWs[previousPixelPos].xyz;
-    if (length(prevP - currP) > temporalWsRadiusThreshold)
-        return;
-
-    const float3 currN = gCurrentNormalWs[pixel].xyz;
-    const float3 prevN = gPreviousNormalWs[previousPixelPos].xyz;
-    if (length(prevN - currN) > temporalNormalThreshold)
-        return;
-
-    const float3 V = normalize(currP - cameraPositionWs);
+    const float3 P = gCurrentPositionWs[pixel].xyz;
+    const float3 N = gCurrentNormalWs[pixel].xyz;
+    const float3 V = normalize(P - cameraPositionWs);
     const float3 diffuse = gAlbedo[pixel].xyz;
     const float3 specular = gSpecular[pixel].xyz;
     const float roughness = gSpecular[pixel].w;
 
-    // Current pixel
     const uint currentPixelLinearIndex = pixel.y * viewportDims.x + pixel.x;
     const uint currentPixelReservoirsStart = currentPixelLinearIndex * nbReservoirPerPixel;
-
-    // Previous pixel
-    const uint previousPixelLinearIndex = previousPixelPos.y * viewportDims.x + previousPixelPos.x;
-    const uint previousPixelReservoirsStart = previousPixelLinearIndex * nbReservoirPerPixel;
 
     // Init rng
     TinyUniformSampleGenerator rng = TinyUniformSampleGenerator(pixel.xy, sampleIndex);
@@ -183,15 +154,21 @@ struct RTXDI_DISpatioTemporalResamplingParameters
     {
         RestirReservoir currentReservoir = gCurrentFrameReservoirs[currentPixelReservoirsStart + i];
 
-        RestirReservoir previousReservoir = gPreviousFrameReservoirs[previousPixelReservoirsStart + i];
-        if (motion > 0)
-        {
-            // Clamp M according to paper.
-            previousReservoir.mM = min(10 * currentReservoir.mM, previousReservoir.mM);
-        }
+        RTXDI_DISpatioTemporalResamplingParameters stparams;
+       // stparams.screenSpaceMotion = primary.motionVector; YANN to compute
+        stparams.maxHistoryLength = 20;
+        stparams.biasCorrectionMode = RTXDI_BIAS_CORRECTION_BASIC;//  YANN really?
+        stparams.depthThreshold = 0.1f;
+        stparams.normalThreshold = 0.5f;
+        stparams.numSamples = 32;// YANN restir M
+        stparams.numDisocclusionBoostSamples = 0;
+        stparams.samplingRadius = 32;
+        stparams.enableVisibilityShortcut = true;
+        stparams.enablePermutationSampling = true;
+        stparams.discountNaiveSamples = false;
 
         gCurrentFrameReservoirs[currentPixelReservoirsStart + i] =
-            combineReservoirs(currentReservoir, previousReservoir, currP, currN, V, diffuse, specular, roughness, rng);
+            RTXDI_DISpatioTemporalResamplingWithPairwiseMIS(pixel, currentReservoir, stparams, P, N, V, diffuse, specular, roughness, rng);
     }
 }
 
