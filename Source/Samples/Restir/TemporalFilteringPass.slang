@@ -90,8 +90,8 @@ int2 getPreviousFramePixelPos(float4 P, float width, float height)
         RestirReservoir previousReservoir = gPreviousFrameReservoirs[previousPixelReservoirsStart + i];
         if (motion > 0)
         {
-            // Clamp M according to paper.
-            previousReservoir.mM = min(10 * currentReservoir.mM, previousReservoir.mM);
+            // Clamp M according to paper. But use a smaller value(5) since it gives better results.
+            previousReservoir.mM = min(5 * currentReservoir.mM, previousReservoir.mM);
         }
 
         gCurrentFrameReservoirs[currentPixelReservoirsStart + i] =
