@@ -103,7 +103,7 @@ Denoising can be done using NRD or Optix denoiser
 Note that NRD is currently performed on the final image(same for Optix).
 It is not recommended when i read the doc. So we may want to denoise the reservoirs instead. This is work in progress see: NRDDenoiserPass_MultipleNrd_WIP.cpp
 
-# ISSUES
+# CURRENT ISSUES
 This is work in progress and some artefacts are still visible.
 
 ### Noise on the Arcade scene floor
@@ -114,4 +114,17 @@ This is work in progress and some artefacts are still visible.
 https://youtu.be/Traf3cYggXs  
 Increasing the number of reservoir per pixels helps but it kills performance. The scene has three lights so theoretically no more than 3 reservoirs/pixel should be necessary. Or not since we are using area lights ;)  
 **Either the temporal filtering pass doesnt do a good job enough or it is the Optix denoiser**.
-It is more noticeable when camera is far away.
+It is more noticeable when camera is far away from objects.
+
+# FIXED ISSUES
+### Temporal acnee  
+![Acnee_Image](https://github.com/user-attachments/assets/a780f519-a4d4-4d55-a3d5-d7881f5f2423)
+GIF: https://www.dropbox.com/scl/fi/h264f8x3ko60pbr8axf68/Acnee_Issue.gif?rlkey=iv8g2uudfgfk6o2obg9tlyj0c&st=ukvz34rd&dl=0
+
+This is fixed by:
+- Apply a blue noise during shading when 
+    shading *= min(reservoir.m_W * (4.0f * gBlueNoise[pixelIdx % 470].x), 10.0f);  
+- Clamp temporal reservoirs M to smaller value. 5 instead of 20 mentioned in paper
+previousReservoir.mM = min(5 * currentReservoir.mM, previousReservoir.mM); 
+
+GIF:https://www.dropbox.com/scl/fi/1oal6xpbf6ozdyf888h10/Acnee_Fixed.gif?rlkey=oj18j86n9n25oudwrbd7tkbhs&st=90usle4y&dl=0
