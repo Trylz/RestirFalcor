@@ -74,7 +74,8 @@ Resampled Importance Sampling is performed as described in paper. See RISPass.cp
 ### Visibility test
 For each reservoir its weight is set to zero if occluded. So raytracing is performed here. See VisibilityPass.cpp
 
-### Temporal filtering 
+### Temporal filtering  
+**#define USE_TEMPORAL_FILTERING 1**  
 We combine the current frame reservoirs with thoses of the previous frame. See TemporalFilteringPass.cpp
 
 Here the dragon buddha scene with temporal filtering ON and OFF
