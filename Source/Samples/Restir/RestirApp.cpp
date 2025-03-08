@@ -142,8 +142,8 @@ void RestirApp::loadScene(const Fbo* pTargetFbo, RenderContext* pRenderContext)
     {
     case Restir::SceneName::Arcade:
         Restir::SceneSettingsSingleton::instance()->RISSamplesCount = 16;
-        Restir::SceneSettingsSingleton::instance()->nbReservoirPerPixel = 2;
-        Restir::SceneSettingsSingleton::instance()->shadingLightExponent = 3.0f;
+        Restir::SceneSettingsSingleton::instance()->nbReservoirPerPixel = 3;
+        Restir::SceneSettingsSingleton::instance()->shadingLightExponent = 8.0f;
         break;
 
     case Restir::SceneName::DragonBuddha:

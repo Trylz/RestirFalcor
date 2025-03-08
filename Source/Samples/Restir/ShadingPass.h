@@ -18,5 +18,7 @@ private:
 
     Falcor::ref<Falcor::ComputePass> mpShadingPass;
     Falcor::ref<Falcor::Texture> mpOuputTexture;
+ 
+    Falcor::ref<Falcor::Texture> mpBlueNoiseTexture;
 };
 } // namespace Restir

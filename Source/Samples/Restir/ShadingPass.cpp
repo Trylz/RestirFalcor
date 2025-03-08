@@ -1,4 +1,5 @@
 #include "ShadingPass.h"
+#include "ApplicationPathsManager.h"
 #include "GBuffer.h"
 #include "LightManager.h"
 #include "ReservoirManager.h"
@@ -15,8 +16,10 @@ ShadingPass::ShadingPass(Falcor::ref<Falcor::Device> pDevice, uint32_t width, ui
     mpOuputTexture = pDevice->createTexture2D(
         width, height, ResourceFormat::RGBA32Float, 1, 1, nullptr, ResourceBindFlags::UnorderedAccess | ResourceBindFlags::ShaderResource
     );
-
     mpOuputTexture->setName("ShadingPass ouput texture");
+
+    const std::string& blueNoiseTexPath = ApplicationPathsManagerSingleton::instance()->getSharedDataPath() + "BlueNoise64Tiled.png";
+    mpBlueNoiseTexture = Texture::createFromFile(pDevice, blueNoiseTexPath, false, false);
 }
 
 void ShadingPass::render(Falcor::RenderContext* pRenderContext, ref<Camera> pCamera)
@@ -37,6 +40,8 @@ void ShadingPass::render(Falcor::RenderContext* pRenderContext, ref<Camera> pCam
     var["gNormalWs"] = GBufferSingleton::instance()->getCurrentNormalWsTexture();
     var["gAlbedo"] = GBufferSingleton::instance()->getAlbedoTexture();
     var["gSpecular"] = GBufferSingleton::instance()->getSpecularTexture();
+
+    var["gBlueNoise"] = mpBlueNoiseTexture;
 
     mpShadingPass->execute(pRenderContext, mWidth, mHeight);
 }

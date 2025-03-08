@@ -18,6 +18,8 @@ Texture2D<float4> gNormalWs;
 Texture2D<float4> gAlbedo;
 Texture2D<float4> gSpecular;
 
+Texture2D<float4> gBlueNoise;
+
 float3 computeColor(RestirReservoir reservoir, uint2 pixelIdx, float3 P, float3 N, float3 V, float3 diffuse, float3 specular, float roughness)
 { 
     float3 L =  reservoir.mY.mLightSamplePosition - P;
@@ -28,7 +30,7 @@ float3 computeColor(RestirReservoir reservoir, uint2 pixelIdx, float3 P, float3 
     shading *= max(0.0f, dot(L, N));
 
     shading *= reservoir.mY.mIncomingRadiance;
-	shading *= min(reservoir.m_W, 10.0f);
+    shading *= min(reservoir.m_W * 4.0f * gBlueNoise[pixelIdx % 470].x, 10.0f);
     shading /= Llen * Llen;
 
     shading /= pow(Llen, shadingLightExponent); //An additional tweak ;)
