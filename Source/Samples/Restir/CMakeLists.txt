@@ -5,7 +5,7 @@ endif()
 add_falcor_executable(Restir)
 
 target_sources(Restir PRIVATE
-
+    ApplicationPathsManager.h
     NRDDenoiserPass.h
     GBuffer.h
     LightManager.h
@@ -21,19 +21,19 @@ target_sources(Restir PRIVATE
     TemporalFilteringPass.h    
     VisibilityPass.h
 
-	NRDDenoiserPass.cpp
+    NRDDenoiserPass.cpp
     FloatRandomNumberGenerator.h
     GBuffer.cpp
     LightManager.cpp
     OptixDenoiserPass.cpp
     ReservoirManager.cpp
-	RestirApp.cpp
-	RISPass.cpp
+    RestirApp.cpp
+    RISPass.cpp
     ShadingPass.cpp
     SpatialFilteringPass.cpp
 
-	TemporalFilteringPass.cpp
-	VisibilityPass.cpp
+    TemporalFilteringPass.cpp
+    VisibilityPass.cpp
 
     NRDDenoiserPass_PackNRD.slang
     NRDDenoiserPass_UnpackNRD.slang

@@ -1,5 +1,7 @@
 
 #include "RestirApp.h"
+
+#include "ApplicationPathsManager.h"
 #include "LightManager.h"
 #include "ReservoirManager.h"
 #include "SceneSettings.h"
@@ -24,11 +26,9 @@ FALCOR_EXPORT_D3D12_AGILITY_SDK
 #define USE_DENOISING 1
 
 #if SCENE_NAME == 0
-static const std::string kScenePath = "Arcade/Arcade.pyscene";
 static const Restir::SceneName kSceneName = Restir::SceneName::Arcade;
 #else
 // To work model is required. READ TestScenes\DragonBuddha\README.txt
-static const std::string kScenePath = "../../../../TestScenes/DragonBuddha/dragonbuddha.pyscene";
 static const Restir::SceneName kSceneName = Restir::SceneName::DragonBuddha;
 #endif
 
@@ -52,17 +52,26 @@ void RestirApp::onLoad(RenderContext* pRenderContext)
         FALCOR_THROW("Device does not support raytracing!");
     }
 
+    Restir::ApplicationPathsManagerSingleton::create();
+
+    std::wstring exePathW = ExePath();
+    std::string exePath(exePathW.begin(), exePathW.end());
+    Restir::ApplicationPathsManagerSingleton::instance()->setExePath(exePath);
+
     if (kSceneName == Restir::SceneName::DragonBuddha)
     {
-        std::wstring exePath = ExePath();
-        std::string str(exePath.begin(), exePath.end());
-        str += "/" + kScenePath;
-        loadScene(str, getTargetFbo().get(), pRenderContext);
+        const std::string str = exePath + "/../../../../TestScenes/DragonBuddha/dragonbuddha.pyscene";
+        Restir::ApplicationPathsManagerSingleton::instance()->setScenePath(str);
     }
     else
     {
-        loadScene(kScenePath, getTargetFbo().get(), pRenderContext);
+        Restir::ApplicationPathsManagerSingleton::instance()->setScenePath("Arcade/Arcade.pyscene");
     }
+
+    const std::string str = exePath + "/../../../../TestScenes/Shared/";
+    Restir::ApplicationPathsManagerSingleton::instance()->setSharedDataPath(str);
+
+    loadScene(getTargetFbo().get(), pRenderContext);
 }
 
 void RestirApp::onResize(uint32_t width, uint32_t height)
@@ -114,9 +123,9 @@ bool RestirApp::onMouseEvent(const MouseEvent& mouseEvent)
     return mpScene && mpScene->onMouseEvent(mouseEvent);
 }
 
-void RestirApp::loadScene(const std::string& path, const Fbo* pTargetFbo, RenderContext* pRenderContext)
+void RestirApp::loadScene(const Fbo* pTargetFbo, RenderContext* pRenderContext)
 {
-    mpScene = Scene::create(getDevice(), path);
+    mpScene = Scene::create(getDevice(), Restir::ApplicationPathsManagerSingleton::instance()->getScenePath());
     mpCamera = mpScene->getCamera();
 
     // Update the controllers
