@@ -11,7 +11,7 @@ struct SceneSettings
 
     // Temporal settings
     float temporalWsRadiusThreshold = 999999999.0f;
-    float temporalLinearDepthThreshold = 0.1f;
+    float temporalLinearDepthThreshold = 0.4f;
     float temporalNormalThreshold = 0.1f;
 
     // Spatial settings
