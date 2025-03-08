@@ -26,5 +26,7 @@ private:
     uint32_t mSampleIndex = 0u;
     Falcor::ref<Falcor::ComputePass> mpTemporalFilteringPass;
     SceneName mSceneName;
+
+    //Falcor::ref<Falcor::Texture> mpBlueNoiseTexture;
 };
 } // namespace Restir

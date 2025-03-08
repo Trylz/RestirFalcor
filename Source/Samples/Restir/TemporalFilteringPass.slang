@@ -28,6 +28,8 @@ Texture2D<float4> gPreviousNormalWs;
 Texture2D<float4> gAlbedo;
 Texture2D<float4> gSpecular;
 
+//Texture2D<float4> gBlueNoise;
+
 int2 getPreviousFramePixelPos(float4 P, float width, float height)
 {
     float4 ndc = mul(P, previousFrameViewProjMat);

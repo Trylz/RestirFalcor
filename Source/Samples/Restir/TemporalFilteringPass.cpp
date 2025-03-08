@@ -17,6 +17,8 @@ TemporalFilteringPass::TemporalFilteringPass(
     : mpScene(pScene), mWidth(width), mHeight(height), mSceneName(sceneName)
 {
     mpTemporalFilteringPass = ComputePass::create(pDevice, "Samples/Restir/TemporalFilteringPass.slang", "TemporalFilteringPass");
+
+    //mpBlueNoiseTexture = Texture::createFromFile(pDevice, "D:\\RestirFalcor\\TestScenes\\DragonBuddha\\BlueNoise64Tiled.png", false, false);
 }
 
 void TemporalFilteringPass::render(Falcor::RenderContext* pRenderContext)
@@ -46,6 +48,8 @@ void TemporalFilteringPass::render(Falcor::RenderContext* pRenderContext)
     var["gPreviousNormalWs"] = GBufferSingleton::instance()->getPreviousNormalWsTexture();
     var["gAlbedo"] = GBufferSingleton::instance()->getAlbedoTexture();
     var["gSpecular"] = GBufferSingleton::instance()->getSpecularTexture();
+
+    //var["gBlueNoise"] = mpBlueNoiseTexture;
 
     mpTemporalFilteringPass->execute(pRenderContext, mWidth, mHeight);
     mPreviousFrameViewProjMat = mpScene->getCamera()->getViewProjMatrix();
