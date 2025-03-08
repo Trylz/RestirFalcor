@@ -113,8 +113,7 @@ This is work in progress and some artefacts are still visible.
 
 
 ### Light flickering on meshes when camera motion.
-https://youtu.be/Traf3cYggXs  
-Increasing the number of reservoir per pixels helps but it kills performance. The scene has three lights so theoretically no more than 3 reservoirs/pixel should be necessary. Or not since we are using area lights ;)  
+https://youtu.be/Traf3cYggXs   
 **Either the temporal filtering pass doesnt do a good job enough or it is the Optix denoiser**.
 It is more noticeable when camera is far away from objects.
 
