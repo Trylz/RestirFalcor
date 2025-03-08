@@ -112,7 +112,7 @@ This is work in progress and some artefacts are still visible.
 ![ARCADE_CloseUp](https://github.com/user-attachments/assets/327c1dae-7782-4276-9aba-8a05c41cf2d3)
 
 
-### Light flickering on the buddha of the dragon buddha scene when camera motion.
+### Light flickering on meshes when camera motion.
 https://youtu.be/Traf3cYggXs  
 Increasing the number of reservoir per pixels helps but it kills performance. The scene has three lights so theoretically no more than 3 reservoirs/pixel should be necessary. Or not since we are using area lights ;)  
 **Either the temporal filtering pass doesnt do a good job enough or it is the Optix denoiser**.
