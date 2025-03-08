@@ -105,7 +105,7 @@ void LightManager::createArcadeSceneLights(Falcor::ref<Falcor::Scene> pScene)
         light.mRadius = 0.0001f;
         light.mfallOff = std::min((light.mRadius * light.mRadius) * std::exp(1.0f / 0.0001f), 1.0f);
         light.mColor =
-            Falcor::float3(0.0f, 1.0f, 0.0f);
+            Falcor::float3(0.0f, 0.5f, 0.0f);
         light.mWsPosition = Falcor::float3(-0.335609f, 1.04073f, 0.507941f);
         mLights.push_back(light);
     }
