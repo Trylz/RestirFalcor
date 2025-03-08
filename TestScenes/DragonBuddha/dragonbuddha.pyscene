@@ -3,8 +3,8 @@ sceneBuilder.importScene('dragonbuddha.obj')
 
 # Add camera
 camera = Camera()
-camera.position = float3(1.03032, 2.6187, 6.80429)
-camera.target = float3(0.952007, 2.30637, 5.85755)
+camera.position = float3(1.31626, 1.86929, 4.47785)
+camera.target = float3(1.12267, 1.56036, 3.54667)
 camera.up = float3(0.0, 1.0, 0.0)
 camera.focalLength = 35.0
 sceneBuilder.addCamera(camera)
