@@ -66,6 +66,11 @@ int2 getPreviousFramePixelPos(float4 P, float width, float height)
     if (length(prevN - currN) > temporalNormalThreshold)
         return;
 
+    const float currlinearDepth = gCurrentNormalWs[pixel].w;
+    const float prevlinearDepth = gPreviousNormalWs[pixel].w;
+    if (abs(currlinearDepth - prevlinearDepth) > temporalLinearDepthThreshold)
+        return;
+
     const float3 V = normalize(currP - cameraPositionWs);
     const float3 diffuse = gAlbedo[pixel].xyz;
     const float3 specular = gSpecular[pixel].xyz;
