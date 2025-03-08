@@ -123,7 +123,7 @@ GIF: https://www.dropbox.com/scl/fi/h264f8x3ko60pbr8axf68/Acnee_Issue.gif?rlkey=
 
 **This is fixed by:**
 - Apply a blue noise when shading using a reservoir 
-    **shading *= min(reservoir.m_W * (4.0f * gBlueNoise[pixelIdx % 470].x), 10.0f);** (ShadingPass.slang)
+    *shading *= min(reservoir.m_W * (4.0f * gBlueNoise[pixelIdx % 470].x), 10.0f);* (ShadingPass.slang)
 - Clamp temporal reservoirs M to smaller value. 5 instead of 20 mentioned in paper
 **previousReservoir.mM = min(5 * currentReservoir.mM, previousReservoir.mM);**  (TemporalFilteringPass.slang)  
 
