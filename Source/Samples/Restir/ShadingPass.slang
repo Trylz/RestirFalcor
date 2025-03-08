@@ -30,7 +30,7 @@ float3 computeColor(RestirReservoir reservoir, uint2 pixelIdx, float3 P, float3 
     shading *= max(0.0f, dot(L, N));
 
     shading *= reservoir.mY.mIncomingRadiance;
-    shading *= min(reservoir.m_W * 4.0f * gBlueNoise[pixelIdx % 470].x, 10.0f);
+    shading *= min(reservoir.m_W * (4.0f * gBlueNoise[pixelIdx % 470].x), 10.0f);
     shading /= Llen * Llen;
 
     shading /= pow(Llen, shadingLightExponent); //An additional tweak ;)
