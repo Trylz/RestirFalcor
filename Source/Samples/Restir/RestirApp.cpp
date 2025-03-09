@@ -157,7 +157,7 @@ void RestirApp::loadScene(const Fbo* pTargetFbo, RenderContext* pRenderContext)
     case Restir::SceneName::Arcade:
         Restir::SceneSettingsSingleton::instance()->RISSamplesCount = 16;
         Restir::SceneSettingsSingleton::instance()->nbReservoirPerPixel = 3;
-        Restir::SceneSettingsSingleton::instance()->shadingLightExponent = 8.0f;
+        Restir::SceneSettingsSingleton::instance()->sceneShadingLightExponent = 8.0f;
         break;
 
     case Restir::SceneName::DragonBuddha:
@@ -170,7 +170,7 @@ void RestirApp::loadScene(const Fbo* pTargetFbo, RenderContext* pRenderContext)
     case Restir::SceneName::BreakfastRoom:
         Restir::SceneSettingsSingleton::instance()->RISSamplesCount = 32;
         Restir::SceneSettingsSingleton::instance()->nbReservoirPerPixel = 4;
-        Restir::SceneSettingsSingleton::instance()->shadingLightExponent = 4.0f;
+        Restir::SceneSettingsSingleton::instance()->sceneShadingLightExponent = 4.0f;
 
         Restir::SceneSettingsSingleton::instance()->temporalLinearDepthThreshold = 9999999.9f;
         Restir::SceneSettingsSingleton::instance()->temporalNormalThreshold = 0.5f;

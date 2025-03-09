@@ -7,7 +7,8 @@ cbuffer PerFrameCB
     uint2 viewportDims;
     float3 cameraPositionWs;
     uint nbReservoirPerPixel;
-    float shadingLightExponent;
+    float sceneShadingLightExponent;
+    float3 sceneAmbientColor;
 };
 
 RWTexture2D<float4> gOutput;
@@ -67,7 +68,7 @@ void ShadingPass(uint3 threadId: SV_DispatchThreadID)
     for (uint i = 0; i <nbReservoirPerPixel; ++i)
     {
         const RestirReservoir r = gReservoirs[reservoirsStart + i];
-        outColor += computeColor(r, pixel, P, N, V, diffuse, specular, roughness);
+        outColor += computeColor(r, pixel, P, N, V, diffuse, specular, roughness) + sceneAmbientColor * diffuse;
 
         hitDistance = min(hitDistance, r.m_hitDistance);
     }

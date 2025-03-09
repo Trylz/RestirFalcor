@@ -18,8 +18,9 @@ struct SceneSettings
     float spatialWsRadiusThreshold = 999999999.0f;
     float spatialNormalThreshold = 0.12f;
 
-    // Lightin settings
-    float shadingLightExponent = 1.0f;
+    // Lighting settings
+    float sceneShadingLightExponent = 1.0f;
+    Falcor::float3 sceneAmbientColor = Falcor::float3(0.0f, 0.0f, 0.0f);
 };
 
 using SceneSettingsSingleton = Singleton<SceneSettings>;
