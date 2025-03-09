@@ -121,7 +121,7 @@ It is more noticeable when camera is far away from objects.
 
 ### Temporal acnee  
 ![Acnee_Image](https://github.com/user-attachments/assets/a780f519-a4d4-4d55-a3d5-d7881f5f2423)  
-GIF: https://www.dropbox.com/scl/fi/h264f8x3ko60pbr8axf68/Acnee_Issue.gif?rlkey=iv8g2uudfgfk6o2obg9tlyj0c&st=ukvz34rd&dl=0
+https://github.com/user-attachments/assets/3888a81e-9df1-4b40-9b1a-e8cc7dcd4dfe
 
 **The following fixes it for the dragon buddha scene (while the breakfast room still exibits it)**
 - Apply a blue noise when shading using a reservoir 
@@ -130,7 +130,7 @@ GIF: https://www.dropbox.com/scl/fi/h264f8x3ko60pbr8axf68/Acnee_Issue.gif?rlkey=
 **previousReservoir.mM = min(5 * currentReservoir.mM, previousReservoir.mM);**  (TemporalFilteringPass.slang)  
 
 And you get this:  
-GIF: https://www.dropbox.com/scl/fi/1oal6xpbf6ozdyf888h10/Acnee_Fixed.gif?rlkey=oj18j86n9n25oudwrbd7tkbhs&st=90usle4y&dl=0
+https://github.com/user-attachments/assets/e082b290-5991-4bc3-8c07-bc038b04338a
 
 ### Ghosting in breakfast room scene
 https://github.com/user-attachments/assets/4d191ece-a7a9-411b-a637-9324c4afa574
