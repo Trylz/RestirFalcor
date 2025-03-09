@@ -31,7 +31,7 @@ private:
     void createBreakfastSceneLights(Falcor::ref<Falcor::Scene> pScene);
 
     void createSponzaSceneLights(Falcor::ref<Falcor::Scene> pScene);
-    void spawnLightsAlongSegment(
+    void spawnPointLightsAlongSegment(
         const Falcor::float3& startPt,
         const Falcor::float3& endPt,
         FloatRandomNumberGenerator& rng,

@@ -152,22 +152,28 @@ void LightManager::createDragonBuddhaSceneLights(Falcor::ref<Falcor::Scene> pSce
 
 void LightManager::createBreakfastSceneLights(Falcor::ref<Falcor::Scene> pScene)
 {
-    FloatRandomNumberGenerator rng(777);
-    
+    // Add one red area light
     {
-        const Falcor::float3 startPt(-3.61954f, 1.25463f, 6.87732f);
-        const Falcor::float3 endPt(1.85049f, 2.13995f, -0.619274f);
-        spawnLightsAlongSegment(startPt, endPt, rng, 1000.0f, 4);
+        Light light;
+        light.mRadius = 0.1f;
+        light.mfallOff = std::min((light.mRadius * light.mRadius) * std::exp(1.0f / 0.0001f), 1.0f);
+        light.mColor = Falcor::float3(0.0, 1.f, 0.1f) * 40.0f;
+        light.mWsPosition = Falcor::float3(3.1884f, 2.68466f, -1.33084f);
+        mLights.push_back(light);
     }
 
+    // Add one green area light
     {
-        const Falcor::float3 startPt(-2.82746f, 2.43619f, -1.17568f);
-        const Falcor::float3 endPt(3.21094f, 0.227025f, 7.33892f);
-        spawnLightsAlongSegment(startPt, endPt, rng, 1000.0f, 4);
+        Light light;
+        light.mRadius = 0.1f;
+        light.mfallOff = std::min((light.mRadius * light.mRadius) * std::exp(1.0f / 0.0001f), 1.0f);
+        light.mColor = Falcor::float3(0.0, 1.f, 0.1f) * 40.0f;
+        light.mWsPosition = Falcor::float3(3.1884f, 2.68466f, -1.33084f);
+        mLights.push_back(light);
     }
 }
 
-void LightManager::spawnLightsAlongSegment(
+void LightManager::spawnPointLightsAlongSegment(
     const Falcor::float3& startPt,
     const Falcor::float3& endPt,
     FloatRandomNumberGenerator& rng,
@@ -205,32 +211,32 @@ void LightManager::createSponzaSceneLights(Falcor::ref<Falcor::Scene> pScene)
     {
         const Falcor::float3 startPt(1.31626f, 1.86929f, 4.47785f);
         const Falcor::float3 endPt(-13.3487f, 2.38799f, 5.24492f);
-        spawnLightsAlongSegment(startPt, endPt, rng, 1000.0f, 4);
+        spawnPointLightsAlongSegment(startPt, endPt, rng, 1000.0f, 4);
     }
 
 
     {
         const Falcor::float3 startPt(13.5686f, 2.20822f, -4.80682f);
         const Falcor::float3 endPt(-13.3297f, 2.26712f, -4.96876f);
-        spawnLightsAlongSegment(startPt, endPt, rng, 1000.0f, 4);
+        spawnPointLightsAlongSegment(startPt, endPt, rng, 1000.0f, 4);
     }
 
     {
         const Falcor::float3 startPt(13.9416f, 2.45657f, 0.288835f);
         const Falcor::float3 endPt(-13.4072f, 2.36068f, 0.431062f);
-        spawnLightsAlongSegment(startPt, endPt, rng, 1000.0f, 4);
+        spawnPointLightsAlongSegment(startPt, endPt, rng, 1000.0f, 4);
     }
 
     {
         const Falcor::float3 startPt(14.4111f, 7.54439f, 5.19206f);
         const Falcor::float3 endPt(-12.7583f, 7.24114f, 5.15393f);
-        spawnLightsAlongSegment(startPt, endPt, rng, 1000.0f, 4);
+        spawnPointLightsAlongSegment(startPt, endPt, rng, 1000.0f, 4);
     }
 
     {
         const Falcor::float3 startPt(14.2571f, 7.36345f, -5.47451f);
         const Falcor::float3 endPt(-11.4741f, 7.57215f, -5.27168f);
-        spawnLightsAlongSegment(startPt, endPt, rng, 1000.0f, 4);
+        spawnPointLightsAlongSegment(startPt, endPt, rng, 1000.0f, 4);
     }
 }
 
