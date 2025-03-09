@@ -42,7 +42,7 @@ RWTexture2D<float4> gSpecular;
 
     for (uint reservoirLocalIdx = 0; reservoirLocalIdx < nbReservoirPerPixel; ++reservoirLocalIdx)
     {
-        const float spatialSearchRadius = 32.0f; // Maybe use a % of viewportDims?
+        const float spatialSearchRadius = 8.0f;
 
         const uint currentPixelLinearIndex = pixel.y * viewportDims.x + pixel.x;
         const uint currentPixelReservoirsStart = currentPixelLinearIndex * nbReservoirPerPixel;
@@ -71,19 +71,9 @@ RWTexture2D<float4> gSpecular;
             if (neighborP.w == 0.0f)
                 continue;
 
-       //     if (length(prevP.xyz - currP) > temporalWsRadiusThreshold)
-              //  return;
-
             const float3 neighborN = gNormalWs[centralIdx].xyz;
             if (length(neighborN - currN) > spatialNormalThreshold)
                 return;
-
-            const float neighborlinearDepth = gNormalWs[centralIdx].w;
-
-            //if (!RTXDI_IsValidNeighbor(
-                  //  currN, prevN, prevlinearDepth, currlinearDepth, temporalNormalThreshold, temporalLinearDepthThreshold
-               // ))
-               // continue;
 
             const uint centralPixelLinearIndex = centralIdx.y * viewportDims.x + centralIdx.x;
             const uint centralPixelReservoirsStart = centralPixelLinearIndex * nbReservoirPerPixel;
