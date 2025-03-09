@@ -248,7 +248,7 @@ void LightManager::createBreakfastSceneLights(Falcor::ref<Falcor::Scene> pScene)
         light.mColor =
             Falcor::float3(rng.generateUnsignedNormalized(), rng.generateUnsignedNormalized(), rng.generateUnsignedNormalized()) *
             lightIntensity;
-        light.mWsPosition = Falcor::float3(0.988998f, -0.80315f, 1.62673f);
+        light.mWsPosition = Falcor::float3(0.988998f, 1.80315f, 1.62673f);
         mLights.push_back(light);
     }
 
@@ -259,7 +259,7 @@ void LightManager::createBreakfastSceneLights(Falcor::ref<Falcor::Scene> pScene)
         light.mColor =
             Falcor::float3(rng.generateUnsignedNormalized(), rng.generateUnsignedNormalized(), rng.generateUnsignedNormalized()) *
             lightIntensity;
-        light.mWsPosition = Falcor::float3(-2.24108f, -0.679448f, 2.02123f);
+        light.mWsPosition = Falcor::float3(-2.24108f, 1.679448f, 2.02123f);
         mLights.push_back(light);
     }
 }
