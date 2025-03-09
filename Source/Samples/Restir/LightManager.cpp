@@ -180,10 +180,45 @@ void LightManager::createBreakfastSceneLights(Falcor::ref<Falcor::Scene> pScene)
         light.mRadius = lightRadius;
         light.mfallOff = lightFalloff;
         light.mColor = Falcor::float3(0.0, 0.0f, 1.0f) * lightIntensity;
-        light.mWsPosition = Falcor::float3(-1.67098f, -0.102795f, 3.51986f);
+        light.mWsPosition = Falcor::float3(-0.497478f, 2.20476f, -0.623703f);
         mLights.push_back(light);
     }
 
+
+    FloatRandomNumberGenerator rng(111);
+    {
+        Light light;
+        light.mRadius = lightRadius;
+        light.mfallOff = lightFalloff;
+        light.mColor =
+            Falcor::float3(rng.generateUnsignedNormalized(), rng.generateUnsignedNormalized(), rng.generateUnsignedNormalized()) *
+            lightIntensity;
+        light.mWsPosition = Falcor::float3(-1.86844f, -0.252511f, 2.93348f);
+        mLights.push_back(light);
+    }
+
+    {
+        Light light;
+        light.mRadius = lightRadius;
+        light.mfallOff = lightFalloff;
+        light.mColor =
+            Falcor::float3(rng.generateUnsignedNormalized(), rng.generateUnsignedNormalized(), rng.generateUnsignedNormalized()) *
+            lightIntensity;
+        light.mWsPosition = Falcor::float3(2.52178f, -0.0497445f, 4.24406f);
+        mLights.push_back(light);
+    }
+
+ 
+    {
+        Light light;
+        light.mRadius = lightRadius;
+        light.mfallOff = lightFalloff;
+        light.mColor =
+            Falcor::float3(rng.generateUnsignedNormalized(), rng.generateUnsignedNormalized(), rng.generateUnsignedNormalized()) *
+            lightIntensity;
+        light.mWsPosition = Falcor::float3(-4.84042f, 2.67538f, -2.06565f);
+        mLights.push_back(light);
+    }
 }
 
 void LightManager::spawnPointLightsAlongSegment(
