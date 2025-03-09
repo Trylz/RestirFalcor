@@ -160,7 +160,7 @@ void LightManager::createBreakfastSceneLights(Falcor::ref<Falcor::Scene> pScene)
         Light light;
         light.mRadius = lightRadius;
         light.mfallOff = lightFalloff;
-        light.mColor = Falcor::float3(0.0, 1.f, 0.1f) * 10.0f* lightIntensity;
+        light.mColor = Falcor::float3(0.0, 1.f, 0.1f) * 20.0f* lightIntensity;
         light.mWsPosition = Falcor::float3(3.1884f, 2.68466f, -1.33084f);
         mLights.push_back(light);
     }
