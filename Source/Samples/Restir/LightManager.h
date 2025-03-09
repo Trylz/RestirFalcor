@@ -31,7 +31,13 @@ private:
     void createBreakfastSceneLights(Falcor::ref<Falcor::Scene> pScene);
 
     void createSponzaSceneLights(Falcor::ref<Falcor::Scene> pScene);
-    void spawnLightAlongSegment(const Falcor::float3& startPt, const Falcor::float3& endPt, FloatRandomNumberGenerator& rng, float lightIntensity);
+    void spawnLightsAlongSegment(
+        const Falcor::float3& startPt,
+        const Falcor::float3& endPt,
+        FloatRandomNumberGenerator& rng,
+        float lightIntensity,
+        uint32_t nbLightsAlongSegment
+    );
 
     std::vector<Light> mLights;
     Falcor::ref<Falcor::Buffer> mGpuLightBuffer;
