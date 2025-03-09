@@ -40,7 +40,7 @@ Two test scenes are provided. The Arcade scene that ships with Falcor and the Dr
 To switch scene simply change the **SCENE_NAME** define  inside RestirApp.cpp file  
 0: Arcade scene  
 1: Dragon buddha scene.
-
+2: Breakfast room scene.
 
 # Code overview
 Restir source code is located here  
