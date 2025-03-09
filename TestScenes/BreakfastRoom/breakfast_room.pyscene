@@ -3,8 +3,8 @@ sceneBuilder.importScene('breakfast_room.obj')
 
 # Add camera
 camera = Camera()
-camera.position = float3(-4.1931, 4.23575, 6.22907)
-camera.target = float3(-3.79407, 3.894, 5.37819)
+camera.position = float3(-4.25216, 3.76618, 7.13554)
+camera.target = float3(-3.87462, 3.44287, 6.26783)
 camera.up = float3(0.0, 1.0, 0.0)
 camera.focalLength = 35.0
 sceneBuilder.addCamera(camera)
