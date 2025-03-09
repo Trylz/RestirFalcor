@@ -39,7 +39,7 @@ You may want to change this to your current cuda installation but note that only
 - Build and run
 
 ## Test scenes
-Two test scenes are provided. The Arcade scene that ships with Falcor and the DragonBuddha scene.  
+Three test scenes are provided. The Arcade scene that ships with Falcor, the Breakfast scene and the DragonBuddha scene.  
 To switch scene simply change the **SCENE_NAME** define  inside RestirApp.cpp file  
 0: Arcade scene  
 1: Dragon buddha scene.
@@ -61,8 +61,6 @@ This is where lights are created for each scene.
 Right now only spherical(so area) lights are supported.
 ![AeraLightsPNG](https://github.com/user-attachments/assets/092bba21-114f-438b-9f6b-09b36b451a47)
 ![AeraLights_CloseUp](https://github.com/user-attachments/assets/d50d26fb-47a8-40f8-bf72-5d98b735f511)
-
-
 
 ## Settings
 Scenes specific tweaks are stored in the *SceneSettings* struct.  
@@ -96,7 +94,7 @@ See SpatialFilteringPass.cpp
 
 ### Shading
 
-Shading is performed using the reservoir from the previous passes. See ShadingPass.cpp.
+Shading is performed using the reservoirs from the previous passes. See ShadingPass.cpp.
 
 ### Denoising
 **#define USE_DENOISING 1**
@@ -131,10 +129,11 @@ GIF: https://www.dropbox.com/scl/fi/h264f8x3ko60pbr8axf68/Acnee_Issue.gif?rlkey=
 - Clamp temporal reservoirs M to smaller value. 5 instead of 20 mentioned in paper
 **previousReservoir.mM = min(5 * currentReservoir.mM, previousReservoir.mM);**  (TemporalFilteringPass.slang)  
 
+And you get this:  
 GIF: https://www.dropbox.com/scl/fi/1oal6xpbf6ozdyf888h10/Acnee_Fixed.gif?rlkey=oj18j86n9n25oudwrbd7tkbhs&st=90usle4y&dl=0
 
 ### Ghosting in breakfast room scene
 https://github.com/user-attachments/assets/ec819089-3553-48a4-a4cf-6de0d1b678c2
 
 # CONCLUSION
-There is still lot of work to have a produuction ready implementation. Hope i will some more time to spend on it.
+There is still lot of work to be done to have a production ready implementation. Hope i will some more time to spend on it.
