@@ -164,6 +164,7 @@ void RestirApp::loadScene(const Fbo* pTargetFbo, RenderContext* pRenderContext)
         Restir::SceneSettingsSingleton::instance()->RISSamplesCount = 32;
         Restir::SceneSettingsSingleton::instance()->nbReservoirPerPixel = 4;
         Restir::SceneSettingsSingleton::instance()->temporalNormalThreshold = 0.05f;
+        Restir::SceneSettingsSingleton::instance()->temporalLinearDepthThreshold = 0.32f;
         break;
 
     case Restir::SceneName::BreakfastRoom:
