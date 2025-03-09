@@ -42,47 +42,57 @@ RWTexture2D<float4> gSpecular;
 
     for (uint reservoirLocalIdx = 0; reservoirLocalIdx < nbReservoirPerPixel; ++reservoirLocalIdx)
     {
+        const float spatialSearchRadius = 32.0f; // Maybe use a % of viewportDims?
+
         const uint currentPixelLinearIndex = pixel.y * viewportDims.x + pixel.x;
         const uint currentPixelReservoirsStart = currentPixelLinearIndex * nbReservoirPerPixel;
+        const RestirReservoir currentPixelCombinedReservoir = gCurrentFrameReservoirs[currentPixelReservoirsStart + reservoirLocalIdx];
 
-        RestirReservoir combinedReservoir = gCurrentFrameReservoirs[currentPixelReservoirsStart + reservoirLocalIdx];
+        // Try to find a matching surface in the neighborhood of the centrol reprojected pixel
+        // See
+        // https://github.com/NVIDIA-RTX/RTXDI-Library/blob/26a6c715aefbc4056954bd1c7e537b8a9ef8984c/Include/Rtxdi/DI/SpatioTemporalResampling.hlsli
+        int i;
+        int2 centralIdx;
 
-        for (uint i = 0u; i < 5u; ++i)
+        for (i = 0; i < 9; i++)
         {
-            // See https://github.com/lindayukeyi/ReSTIR_DX12/blob/main/ReSTIR/Data/shaders/spatialReuse.hlsl
-            const float radius = sqrt(sampleNext1D(rng)) * 30.0f;
-            const float theta = 2.0f * 3.14159265f * sampleNext1D(rng);
-            float2 neighborf = pixel.xy;
-            neighborf.x += radius * cos(theta);
-            neighborf.y += radius * sin(theta);
+            int2 offset = int2(0, 0);
+            offset.x = int((sampleNext1D(rng) - 0.5f) * spatialSearchRadius);
+            offset.y = int((sampleNext1D(rng) - 0.5f) * spatialSearchRadius);
 
-            if (neighborf.x < 0.0f || neighborf.x >= (float)viewportDims.x || neighborf.y < 0.0f || neighborf.y >= (float)viewportDims.y)
-            {
+            centralIdx = (int2)pixel + offset;
+
+            if (centralIdx.x < 0 || centralIdx.x >= (int)viewportDims.x)
                 continue;
-            }
+            if (centralIdx.y < 0 || centralIdx.y >= (int)viewportDims.y)
+                continue;
 
-            const uint2 neighborPixelPos = (uint2)neighborf;
-            const float3 neighborN = gNormalWs[neighborPixelPos].xyz;
+            const float4 neighborP = gPositionWs[centralIdx];
+            if (neighborP.w == 0.0f)
+                continue;
+
+       //     if (length(prevP.xyz - currP) > temporalWsRadiusThreshold)
+              //  return;
+
+            const float3 neighborN = gNormalWs[centralIdx].xyz;
             if (length(neighborN - currN) > spatialNormalThreshold)
-            {
-                continue;
-            }
+                return;
 
-            const float3 neighborP = gPositionWs[neighborPixelPos].xyz;
-            if (length(neighborP - currP) > spatialWsRadiusThreshold)
-            {
-                continue;
-            }
+            const float neighborlinearDepth = gNormalWs[centralIdx].w;
 
-            const uint neighborPixelLinearIndex = neighborPixelPos.y * viewportDims.x + neighborPixelPos.x;
-            const uint neighborPixelReservoirsStart = neighborPixelLinearIndex * nbReservoirPerPixel;
+            //if (!RTXDI_IsValidNeighbor(
+                  //  currN, prevN, prevlinearDepth, currlinearDepth, temporalNormalThreshold, temporalLinearDepthThreshold
+               // ))
+               // continue;
 
-            const RestirReservoir neighborReservoir = gCurrentFrameReservoirs[neighborPixelReservoirsStart + reservoirLocalIdx];
-            combinedReservoir = combineReservoirs(combinedReservoir, neighborReservoir, currP, currN, V, diffuse, specular, roughness, rng);
+            const uint centralPixelLinearIndex = centralIdx.y * viewportDims.x + centralIdx.x;
+            const uint centralPixelReservoirsStart = centralPixelLinearIndex * nbReservoirPerPixel;
+            const RestirReservoir spatialNeighborReservoir = gCurrentFrameReservoirs[centralPixelReservoirsStart + reservoirLocalIdx];
+
+            combineReservoirs(currentPixelCombinedReservoir, spatialNeighborReservoir, currP, currN, V, diffuse, specular, roughness, rng);
         }
 
-
-        gStagingReservoirs[currentPixelReservoirsStart + reservoirLocalIdx] = combinedReservoir;
+        gStagingReservoirs[currentPixelReservoirsStart + reservoirLocalIdx] = currentPixelCombinedReservoir;
     }
 }
 
