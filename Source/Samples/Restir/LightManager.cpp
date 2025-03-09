@@ -146,16 +146,48 @@ void LightManager::createDragonBuddhaSceneLights(Falcor::ref<Falcor::Scene> pSce
     }
 }
 
-void LightManager::createSponzaSceneLights(Falcor::ref<Falcor::Scene> pScene)
 
+void LightManager::spawnSponzaSceneLights(
+    const Falcor::float3& startPt,
+    const Falcor::float3& endPt,
+    FloatRandomNumberGenerator& rng,
+    Falcor::ref<Falcor::Scene> pScene
+)
 {
+    const uint32_t nbLightsAlongSegment = 4;
+
+    const float lightRadius = 0.001f;
+    const float lightFalloff = std::min((lightRadius * lightRadius) * std::exp(1.0f / 0.0001f), 1.0f);
+
+    const Falcor::float3 extents = endPt - startPt;
+    const Falcor::float3 delta = extents / (float)nbLightsAlongSegment;
+
+    for (uint32_t i = 0; i < nbLightsAlongSegment; ++i)
     {
+        const Falcor::float3 posWs = startPt + (float)i * delta;
+
         Light light;
-        light.mRadius = 0.1f;
-        light.mfallOff = std::min((light.mRadius * light.mRadius) * std::exp(1.0f / 0.0001f), 1.0f);
-        light.mColor = Falcor::float3(0.1f, 0.5f, 0.9f) * 16.0f;
-        light.mWsPosition = pScene->getCamera()->getPosition();
+        light.mRadius = lightRadius;
+        light.mfallOff = lightFalloff;
+        light.mColor =
+            Falcor::float3(rng.generateUnsignedNormalized(), rng.generateUnsignedNormalized(), rng.generateUnsignedNormalized()) * 100.0f /
+            (float)nbLightsAlongSegment;
+        light.mWsPosition = posWs;
         mLights.push_back(light);
     }
 }
+
+void LightManager::createSponzaSceneLights(Falcor::ref<Falcor::Scene> pScene)
+
+{
+    FloatRandomNumberGenerator rng(444);
+
+    {
+        const Falcor::float3 startPt(1.31626f, 1.86929f, 4.47785f);
+        const Falcor::float3 endPt(-13.3487f, 2.38799f, 5.24492f);
+        spawnSponzaSceneLights(startPt, endPt, rng, pScene);
+    }
+
+}
+
 } // namespace Restir
