@@ -262,6 +262,28 @@ void LightManager::createBreakfastSceneLights(Falcor::ref<Falcor::Scene> pScene)
         light.mWsPosition = Falcor::float3(-2.24108f, 1.679448f, 2.02123f);
         mLights.push_back(light);
     }
+
+    {
+        Light light;
+        light.mRadius = lightRadius;
+        light.mfallOff = lightFalloff;
+        light.mColor =
+            Falcor::float3(rng.generateUnsignedNormalized(), rng.generateUnsignedNormalized(), rng.generateUnsignedNormalized()) *
+            lightIntensity;
+        light.mWsPosition = Falcor::float3(3.87917f, -0.0521774f, -1.03112f);
+        mLights.push_back(light);
+    }
+
+    {
+        Light light;
+        light.mRadius = lightRadius;
+        light.mfallOff = lightFalloff;
+        light.mColor =
+            Falcor::float3(rng.generateUnsignedNormalized(), rng.generateUnsignedNormalized(), rng.generateUnsignedNormalized()) *
+            lightIntensity;
+        light.mWsPosition = Falcor::float3(-5.01815f, -0.31212f, -1.68199f);
+        mLights.push_back(light);
+    }
 }
 
 void LightManager::spawnPointLightsAlongSegment(
