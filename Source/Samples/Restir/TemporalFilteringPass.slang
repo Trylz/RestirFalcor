@@ -37,8 +37,18 @@ int2 getPreviousFramePixelPos(float4 P, float width, float height)
     return (int2)(s * float2(width, height));
 }
 
+bool RTXDI_CompareRelativeDifference(float reference, float candidate, float threshold)
+{
+    return (threshold <= 0) || abs(reference - candidate) <= threshold * max(reference, candidate);
+}
+//See https://github.com/NVIDIA-RTX/RTXDI-Library/blob/26a6c715aefbc4056954bd1c7e537b8a9ef8984c/Include/Rtxdi/Utils/Math.hlsli
+bool RTXDI_IsValidNeighbor(float3 ourNorm, float3 theirNorm, float ourDepth, float theirDepth, float normalThreshold, float depthThreshold)
+{
+    return (dot(theirNorm.xyz, ourNorm.xyz) >= normalThreshold) && RTXDI_CompareRelativeDifference(ourDepth, theirDepth, depthThreshold);
+}
+
 [numthreads(16, 16, 1)] void TemporalFilteringPass(uint3 threadId
-                                        : SV_DispatchThreadID)
+                                                   : SV_DispatchThreadID)
 {
     const uint2 pixel = threadId.xy;
     if (any(pixel >= viewportDims))
@@ -63,11 +73,17 @@ int2 getPreviousFramePixelPos(float4 P, float width, float height)
 
     const float3 currN = gCurrentNormalWs[pixel].xyz;
     const float3 prevN = gPreviousNormalWs[previousPixelPos].xyz;
-    if (length(prevN - currN) > temporalNormalThreshold)
-        return;
 
     const float currlinearDepth = gCurrentNormalWs[pixel].w;
     const float prevlinearDepth = gPreviousNormalWs[pixel].w;
+
+    if (!RTXDI_IsValidNeighbor(currN, prevN, prevlinearDepth, currlinearDepth, 0.5f, 0.1f))
+    {
+        // If RTXDi like neighbor check fails check the normal.
+        if (length(prevN - currN) > temporalNormalThreshold)
+            return;
+    }
+
     if (abs(currlinearDepth - prevlinearDepth) > temporalLinearDepthThreshold)
         return;
 
