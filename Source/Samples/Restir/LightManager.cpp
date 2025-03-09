@@ -153,10 +153,16 @@ void LightManager::createDragonBuddhaSceneLights(Falcor::ref<Falcor::Scene> pSce
 void LightManager::createBreakfastSceneLights(Falcor::ref<Falcor::Scene> pScene)
 {
     FloatRandomNumberGenerator rng(777);
+    
+    {
+        const Falcor::float3 startPt(-3.61954f, 1.25463f, 6.87732f);
+        const Falcor::float3 endPt(1.85049f, 2.13995f, -0.619274f);
+        spawnLightsAlongSegment(startPt, endPt, rng, 1000.0f, 4);
+    }
 
     {
-        const Falcor::float3 startPt(1.31626f, 1.86929f, 4.47785f);
-        const Falcor::float3 endPt(-13.3487f, 2.38799f, 5.24492f);
+        const Falcor::float3 startPt(-2.82746f, 2.43619f, -1.17568f);
+        const Falcor::float3 endPt(3.21094f, 0.227025f, 7.33892f);
         spawnLightsAlongSegment(startPt, endPt, rng, 1000.0f, 4);
     }
 }
