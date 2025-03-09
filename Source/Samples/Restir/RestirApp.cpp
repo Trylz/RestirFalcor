@@ -165,6 +165,12 @@ void RestirApp::loadScene(const Fbo* pTargetFbo, RenderContext* pRenderContext)
         Restir::SceneSettingsSingleton::instance()->nbReservoirPerPixel = 4;
         break;
 
+    case Restir::SceneName::BreakfastRoom:
+        Restir::SceneSettingsSingleton::instance()->RISSamplesCount = 32;
+        Restir::SceneSettingsSingleton::instance()->nbReservoirPerPixel = 4;
+        Restir::SceneSettingsSingleton::instance()->shadingLightExponent = 2.0f;
+        break;
+
     case Restir::SceneName::Sponza:
         Restir::SceneSettingsSingleton::instance()->RISSamplesCount = 32;
         Restir::SceneSettingsSingleton::instance()->nbReservoirPerPixel = 8;
