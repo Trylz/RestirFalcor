@@ -180,7 +180,7 @@ void LightManager::spawnSponzaSceneLights(
 void LightManager::createSponzaSceneLights(Falcor::ref<Falcor::Scene> pScene)
 
 {
-    FloatRandomNumberGenerator rng(444);
+    FloatRandomNumberGenerator rng(222);
 
     {
         const Falcor::float3 startPt(1.31626f, 1.86929f, 4.47785f);
@@ -188,6 +188,12 @@ void LightManager::createSponzaSceneLights(Falcor::ref<Falcor::Scene> pScene)
         spawnSponzaSceneLights(startPt, endPt, rng, pScene);
     }
 
+
+    {
+        const Falcor::float3 startPt(13.8743f, 7.22215f, 5.01944f);
+        const Falcor::float3 endPt(-13.1017f, 7.29357f, 4.91855f);
+        spawnSponzaSceneLights(startPt, endPt, rng, pScene);
+    }
 }
 
 } // namespace Restir
