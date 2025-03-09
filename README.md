@@ -134,4 +134,7 @@ GIF: https://www.dropbox.com/scl/fi/h264f8x3ko60pbr8axf68/Acnee_Issue.gif?rlkey=
 GIF: https://www.dropbox.com/scl/fi/1oal6xpbf6ozdyf888h10/Acnee_Fixed.gif?rlkey=oj18j86n9n25oudwrbd7tkbhs&st=90usle4y&dl=0
 
 ### Ghosting in breakfast room scene
-<todo>
+https://github.com/user-attachments/assets/ec819089-3553-48a4-a4cf-6de0d1b678c2
+
+# CONCLUSION
+There is still lot of work to have a produuction ready implementation. Hope i will some more time to spend on it.
