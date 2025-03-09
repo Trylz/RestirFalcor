@@ -133,7 +133,9 @@ And you get this:
 GIF: https://www.dropbox.com/scl/fi/1oal6xpbf6ozdyf888h10/Acnee_Fixed.gif?rlkey=oj18j86n9n25oudwrbd7tkbhs&st=90usle4y&dl=0
 
 ### Ghosting in breakfast room scene
-https://github.com/user-attachments/assets/ec819089-3553-48a4-a4cf-6de0d1b678c2
+https://github.com/user-attachments/assets/4d191ece-a7a9-411b-a637-9324c4afa574
+
+
 
 # CONCLUSION
 There is still lot of work to be done to have a production ready implementation. Hope i will some more time to spend on it.
