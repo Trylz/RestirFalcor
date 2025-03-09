@@ -1,4 +1,4 @@
-# Load FBX
+# Load OBJ
 sceneBuilder.importScene('breakfast_room.obj')
 
 # Add camera
