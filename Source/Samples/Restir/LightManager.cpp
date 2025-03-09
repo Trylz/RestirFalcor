@@ -190,8 +190,8 @@ void LightManager::createSponzaSceneLights(Falcor::ref<Falcor::Scene> pScene)
 
 
     {
-        const Falcor::float3 startPt(13.5686, 2.20822, -4.80682);
-        const Falcor::float3 endPt(-13.3297, 2.26712, -4.96876);
+        const Falcor::float3 startPt(13.5686f, 2.20822f, -4.80682f);
+        const Falcor::float3 endPt(-13.3297f, 2.26712f, -4.96876f);
         spawnSponzaSceneLights(startPt, endPt, rng, pScene);
     }
 }
