@@ -15,9 +15,9 @@ https://research.nvidia.com/sites/default/files/pubs/2020-07_Spatiotemporal-rese
 # How to test
 
 ## Grab necessary assets
-First grab the dragon buddha model has explained here:
+The dragon buddha model is huge. Git doesnt allow me to push files that are greater than 100 MB.
+That model nned to be insalled has explained here:
 https://github.com/Trylz/RestirFalcor/blob/master/TestScenes/DragonBuddha/README.txt  
-It is necessary since git doesnt allow me to push file that are greater than 100 MB.
 
 ## Building prerequisites
 - Windows 10 version 20H2 (October 2020 Update) or newer, OS build revision .789 or newer
