@@ -41,7 +41,7 @@ void PackNRD(uint3 threadId: SV_DispatchThreadID)
     gNormalLinearRoughness[pixel] = NRD_FrontEnd_PackNormalAndRoughness(gNormalWs[pixel].xyz, gSpecular[pixel].w, gAlbedo[pixel].w);
 
     // View Z and MVs
-    const float4 P = gPositionWs[pixel].w;
+    const float4 P = gPositionWs[pixel];
     if (P.w!= 0.0f)
     {
         gViewZ[pixel] = mul(P, viewMat).z;
