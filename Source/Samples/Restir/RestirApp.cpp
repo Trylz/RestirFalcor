@@ -74,7 +74,7 @@ void RestirApp::onLoad(RenderContext* pRenderContext)
     }
     else if (kSceneName == Restir::SceneName::Sponza)
     {
-        const std::string str = exePath + "/../../../../TestScenes/Bugged/Sponza/sponza.pyscene";
+        const std::string str = exePath + "/../../../../TestScenes/Sponza/sponza.pyscene";
         Restir::ApplicationPathsManagerSingleton::instance()->setScenePath(str);
     }
     else
