@@ -170,7 +170,7 @@ void LightManager::spawnSponzaSceneLights(
         light.mRadius = lightRadius;
         light.mfallOff = lightFalloff;
         light.mColor =
-            Falcor::float3(rng.generateUnsignedNormalized(), rng.generateUnsignedNormalized(), rng.generateUnsignedNormalized()) * 100.0f /
+            Falcor::float3(rng.generateUnsignedNormalized(), rng.generateUnsignedNormalized(), rng.generateUnsignedNormalized()) * 1000.0f /
             (float)nbLightsAlongSegment;
         light.mWsPosition = posWs;
         mLights.push_back(light);
@@ -192,6 +192,25 @@ void LightManager::createSponzaSceneLights(Falcor::ref<Falcor::Scene> pScene)
     {
         const Falcor::float3 startPt(13.5686f, 2.20822f, -4.80682f);
         const Falcor::float3 endPt(-13.3297f, 2.26712f, -4.96876f);
+        spawnSponzaSceneLights(startPt, endPt, rng, pScene);
+    }
+
+
+    {
+        const Falcor::float3 startPt(13.9416f, 2.45657f, 0.288835f);
+        const Falcor::float3 endPt(-13.4072f, 2.36068f, 0.431062f);
+        spawnSponzaSceneLights(startPt, endPt, rng, pScene);
+    }
+
+    {
+        const Falcor::float3 startPt(14.4111f, 7.54439f, 5.19206f);
+        const Falcor::float3 endPt(-12.7583f, 7.24114f, 5.15393f);
+        spawnSponzaSceneLights(startPt, endPt, rng, pScene);
+    }
+
+    {
+        const Falcor::float3 startPt(14.2571f, 7.36345f, -5.47451f);
+        const Falcor::float3 endPt(-11.4741f, 7.57215f, -5.27168f);
         spawnSponzaSceneLights(startPt, endPt, rng, pScene);
     }
 }
