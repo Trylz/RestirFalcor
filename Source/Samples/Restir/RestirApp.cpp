@@ -14,7 +14,7 @@
 FALCOR_EXPORT_D3D12_AGILITY_SDK
 
 // THE SCENE WE USE.
-#define SCENE_NAME 1
+#define SCENE_NAME 2
 
 // WE WANT TO USE TEMPORAL FILTERING
 #define USE_TEMPORAL_FILTERING 1
@@ -27,9 +27,11 @@ FALCOR_EXPORT_D3D12_AGILITY_SDK
 
 #if SCENE_NAME == 0
 static const Restir::SceneName kSceneName = Restir::SceneName::Arcade;
-#else
+#elif SCENE_NAME == 1
 // To work model is required. READ TestScenes\DragonBuddha\README.txt
 static const Restir::SceneName kSceneName = Restir::SceneName::DragonBuddha;
+#else
+static const Restir::SceneName kSceneName = Restir::SceneName::Sponza;
 #endif
 
 // https://stackoverflow.com/questions/4804298/how-to-convert-wstring-into-string
@@ -61,6 +63,11 @@ void RestirApp::onLoad(RenderContext* pRenderContext)
     if (kSceneName == Restir::SceneName::DragonBuddha)
     {
         const std::string str = exePath + "/../../../../TestScenes/DragonBuddha/dragonbuddha.pyscene";
+        Restir::ApplicationPathsManagerSingleton::instance()->setScenePath(str);
+    }
+    else if (kSceneName == Restir::SceneName::Sponza)
+    {
+        const std::string str = exePath + "/../../../../TestScenes/Sponza/sponza.pyscene";
         Restir::ApplicationPathsManagerSingleton::instance()->setScenePath(str);
     }
     else
@@ -149,6 +156,11 @@ void RestirApp::loadScene(const Fbo* pTargetFbo, RenderContext* pRenderContext)
     case Restir::SceneName::DragonBuddha:
         Restir::SceneSettingsSingleton::instance()->RISSamplesCount = 32;
         Restir::SceneSettingsSingleton::instance()->nbReservoirPerPixel = 4;
+        break;
+
+    case Restir::SceneName::Sponza:
+        Restir::SceneSettingsSingleton::instance()->RISSamplesCount = 32;
+        Restir::SceneSettingsSingleton::instance()->nbReservoirPerPixel = 8;
         break;
     }
 

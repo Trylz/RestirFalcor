@@ -23,6 +23,10 @@ void LightManager::init(Falcor::ref<Falcor::Device> pDevice, Falcor::ref<Falcor:
     case SceneName::DragonBuddha:
         createDragonBuddhaSceneLights(pScene);
         break;
+
+    case SceneName::Sponza:
+        createSponzaSceneLights(pScene);
+        break;
     }
 
     //------------------------------------------------------------------------------------------------------------
@@ -142,4 +146,16 @@ void LightManager::createDragonBuddhaSceneLights(Falcor::ref<Falcor::Scene> pSce
     }
 }
 
+void LightManager::createSponzaSceneLights(Falcor::ref<Falcor::Scene> pScene)
+
+{
+    {
+        Light light;
+        light.mRadius = 0.1f;
+        light.mfallOff = std::min((light.mRadius * light.mRadius) * std::exp(1.0f / 0.0001f), 1.0f);
+        light.mColor = Falcor::float3(0.1f, 0.5f, 0.9f) * 16.0f;
+        light.mWsPosition = pScene->getCamera()->getPosition();
+        mLights.push_back(light);
+    }
+}
 } // namespace Restir
