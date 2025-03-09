@@ -2,6 +2,9 @@
 
 This repository host an implementation of the Restir algorithm inside Nvidia Falcor 8.0.
 ![restir_teaser](https://github.com/user-attachments/assets/e2757806-ed91-4eab-91fd-16b60cdad4f5)
+![Screenshot 2025-03-09 003437](https://github.com/user-attachments/assets/6c711cc9-094b-4477-86f0-2bb5bc745225)
+
+
 Showcase: https://youtu.be/E4Vb9qp4OP4
 
 Source code: https://github.com/Trylz/RestirFalcor/tree/master/Source/Samples/Restir  
@@ -130,5 +133,5 @@ GIF: https://www.dropbox.com/scl/fi/h264f8x3ko60pbr8axf68/Acnee_Issue.gif?rlkey=
 
 GIF: https://www.dropbox.com/scl/fi/1oal6xpbf6ozdyf888h10/Acnee_Fixed.gif?rlkey=oj18j86n9n25oudwrbd7tkbhs&st=90usle4y&dl=0
 
-# FIXED ISSUES
-
+### Ghosting in breakfast room scene
+<todo>
