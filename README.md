@@ -117,15 +117,18 @@ https://youtu.be/Traf3cYggXs
 **Either my temporal filtering pass doesnt do a good job enough or it is the Optix denoiser**.
 It is more noticeable when camera is far away from objects.
 
-# FIXED ISSUES
+
 ### Temporal acnee  
 ![Acnee_Image](https://github.com/user-attachments/assets/a780f519-a4d4-4d55-a3d5-d7881f5f2423)  
 GIF: https://www.dropbox.com/scl/fi/h264f8x3ko60pbr8axf68/Acnee_Issue.gif?rlkey=iv8g2uudfgfk6o2obg9tlyj0c&st=ukvz34rd&dl=0
 
-**This was fixed by:**
+**The following fixes it for the dragon buddha scene (while the breakfast room still exibits it)**
 - Apply a blue noise when shading using a reservoir 
     **shading = shading * min(reservoir.m_W * (4.0f * gBlueNoise[pixelIdx % 470].x), 10.0f);** (ShadingPass.slang)
 - Clamp temporal reservoirs M to smaller value. 5 instead of 20 mentioned in paper
 **previousReservoir.mM = min(5 * currentReservoir.mM, previousReservoir.mM);**  (TemporalFilteringPass.slang)  
 
 GIF: https://www.dropbox.com/scl/fi/1oal6xpbf6ozdyf888h10/Acnee_Fixed.gif?rlkey=oj18j86n9n25oudwrbd7tkbhs&st=90usle4y&dl=0
+
+# FIXED ISSUES
+
