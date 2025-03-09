@@ -202,6 +202,9 @@ void OptixDenoiserPass::render(RenderContext* pRenderContext)
 {
     FALCOR_PROFILE(pRenderContext, "OptixDenoiserPass::render");
 
+    if (mFirstFrame)
+        mPreviousFrameViewProjMat = mpScene->getCamera()->getViewProjMatrix();
+
     const uint2 bufferSize = uint2(mWidth, mHeight);
 
     convertTexToBuf(pRenderContext, mInColorFromShadingPassTexture, mDenoiser.interop.denoiserInput.buffer, bufferSize);
