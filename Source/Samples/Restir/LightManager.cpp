@@ -174,7 +174,6 @@ void LightManager::createBreakfastSceneLights(Falcor::ref<Falcor::Scene> pScene)
         mLights.push_back(light);
     }
 
-
     {
         Light light;
         light.mRadius = lightRadius;
@@ -208,7 +207,6 @@ void LightManager::createBreakfastSceneLights(Falcor::ref<Falcor::Scene> pScene)
         mLights.push_back(light);
     }
 
- 
     {
         Light light;
         light.mRadius = lightRadius;
@@ -217,6 +215,51 @@ void LightManager::createBreakfastSceneLights(Falcor::ref<Falcor::Scene> pScene)
             Falcor::float3(rng.generateUnsignedNormalized(), rng.generateUnsignedNormalized(), rng.generateUnsignedNormalized()) *
             lightIntensity;
         light.mWsPosition = Falcor::float3(-4.84042f, 2.67538f, -2.06565f);
+        mLights.push_back(light);
+    }
+
+
+    {
+        Light light;
+        light.mRadius = lightRadius;
+        light.mfallOff = lightFalloff;
+        light.mColor =
+            Falcor::float3(rng.generateUnsignedNormalized(), rng.generateUnsignedNormalized(), rng.generateUnsignedNormalized()) *
+            lightIntensity;
+        light.mWsPosition = Falcor::float3(-2.74649f, 3.81714f, -3.12922f);
+        mLights.push_back(light);
+    }
+
+    {
+        Light light;
+        light.mRadius = lightRadius;
+        light.mfallOff = lightFalloff;
+        light.mColor =
+            Falcor::float3(rng.generateUnsignedNormalized(), rng.generateUnsignedNormalized(), rng.generateUnsignedNormalized()) *
+            lightIntensity;
+        light.mWsPosition = Falcor::float3(2.12604f, 3.8762f, -2.58422f);
+        mLights.push_back(light);
+    }
+
+    {
+        Light light;
+        light.mRadius = lightRadius;
+        light.mfallOff = lightFalloff;
+        light.mColor =
+            Falcor::float3(rng.generateUnsignedNormalized(), rng.generateUnsignedNormalized(), rng.generateUnsignedNormalized()) *
+            lightIntensity;
+        light.mWsPosition = Falcor::float3(0.988998f, -0.80315f, 1.62673f);
+        mLights.push_back(light);
+    }
+
+    {
+        Light light;
+        light.mRadius = lightRadius;
+        light.mfallOff = lightFalloff;
+        light.mColor =
+            Falcor::float3(rng.generateUnsignedNormalized(), rng.generateUnsignedNormalized(), rng.generateUnsignedNormalized()) *
+            lightIntensity;
+        light.mWsPosition = Falcor::float3(-2.24108f, -0.679448f, 2.02123f);
         mLights.push_back(light);
     }
 }
