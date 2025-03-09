@@ -15,7 +15,7 @@ https://research.nvidia.com/sites/default/files/pubs/2020-07_Spatiotemporal-rese
 # How to test
 
 ## Grab necessary assets
-The dragon buddha model is huge. Git doesnt allow me to push files that are greater than 100 MB.
+The dragon buddha model used is huge. Git doesnt allow me to push files that are greater than 100 MB.
 That model need to be insalled has explained here:
 https://github.com/Trylz/RestirFalcor/blob/master/TestScenes/DragonBuddha/README.txt  
 
