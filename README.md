@@ -91,7 +91,7 @@ https://youtu.be/iBL5fuxIujA
 
 ### Spatial filtering 
 **#define USE_SPATIAL_FILTERING 0**  
-Combine each pixel reservoirs with thoses of its neighbors. This is disabled by default since it give me strange results.  
+Combine each pixel reservoirs with thoses of its neighbors. This is disabled by default since i dont see any gain using it.  
 See SpatialFilteringPass.cpp
 
 ### Shading
