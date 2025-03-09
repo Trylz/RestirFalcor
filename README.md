@@ -114,7 +114,7 @@ This is work in progress and some artefacts are still visible.
 
 ### Light flickering on meshes when camera motion.
 https://youtu.be/Traf3cYggXs   
-**Either the temporal filtering pass doesnt do a good job enough or it is the Optix denoiser**.
+**Either my temporal filtering pass doesnt do a good job enough or it is the Optix denoiser**.
 It is more noticeable when camera is far away from objects.
 
 # FIXED ISSUES
