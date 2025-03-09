@@ -30,6 +30,8 @@ static const Restir::SceneName kSceneName = Restir::SceneName::Arcade;
 #elif SCENE_NAME == 1
 // To work model is required. READ TestScenes\DragonBuddha\README.txt
 static const Restir::SceneName kSceneName = Restir::SceneName::DragonBuddha;
+#elif SCENE_NAME == 2
+static const Restir::SceneName kSceneName = Restir::SceneName::BreakfastRoom;
 #else
 static const Restir::SceneName kSceneName = Restir::SceneName::Sponza;
 #endif
@@ -65,9 +67,14 @@ void RestirApp::onLoad(RenderContext* pRenderContext)
         const std::string str = exePath + "/../../../../TestScenes/DragonBuddha/dragonbuddha.pyscene";
         Restir::ApplicationPathsManagerSingleton::instance()->setScenePath(str);
     }
+    else if (kSceneName == Restir::SceneName::BreakfastRoom)
+    {
+        const std::string str = exePath + "/../../../../TestScenes/BreakfastRoom/breakfast_room.pyscene";
+        Restir::ApplicationPathsManagerSingleton::instance()->setScenePath(str);
+    }
     else if (kSceneName == Restir::SceneName::Sponza)
     {
-        const std::string str = exePath + "/../../../../TestScenes/Sponza/sponza.pyscene";
+        const std::string str = exePath + "/../../../../TestScenes/Bugged/Sponza/sponza.pyscene";
         Restir::ApplicationPathsManagerSingleton::instance()->setScenePath(str);
     }
     else

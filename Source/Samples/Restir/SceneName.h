@@ -6,6 +6,7 @@ enum class SceneName
 {
     Arcade,
     DragonBuddha,
+    BreakfastRoom,
     Sponza,
 };
 }

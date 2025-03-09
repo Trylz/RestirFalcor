@@ -1,0 +1,10 @@
+# Load OBJ
+sceneBuilder.importScene('sponza.obj')
+
+# Add camera
+camera = Camera()
+camera.position = float3(15.6035, 2.08232, -5.18329)
+camera.target = float3(14.6071, 2.0509, -5.10382)
+camera.up = float3(0.0, 1.0, 0.0)
+camera.focalLength = 35.0
+sceneBuilder.addCamera(camera)

@@ -28,8 +28,10 @@ struct LightManager
 private:
     void createArcadeSceneLights(Falcor::ref<Falcor::Scene> pScene);
     void createDragonBuddhaSceneLights(Falcor::ref<Falcor::Scene> pScene);
+    void createBreakfastSceneLights(Falcor::ref<Falcor::Scene> pScene);
+
     void createSponzaSceneLights(Falcor::ref<Falcor::Scene> pScene);
-    void spawnSponzaSceneLights(const Falcor::float3& startPt, const Falcor::float3& endPt, FloatRandomNumberGenerator& rng, Falcor::ref<Falcor::Scene> pScene );
+    void spawnLightAlongSegment(const Falcor::float3& startPt, const Falcor::float3& endPt, FloatRandomNumberGenerator& rng, float lightIntensity);
 
     std::vector<Light> mLights;
     Falcor::ref<Falcor::Buffer> mGpuLightBuffer;
