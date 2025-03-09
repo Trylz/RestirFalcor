@@ -14,7 +14,7 @@
 FALCOR_EXPORT_D3D12_AGILITY_SDK
 
 // THE SCENE WE USE.
-#define SCENE_NAME 1
+#define SCENE_NAME 2
 
 // WE WANT TO USE TEMPORAL FILTERING
 #define USE_TEMPORAL_FILTERING 1
@@ -169,6 +169,9 @@ void RestirApp::loadScene(const Fbo* pTargetFbo, RenderContext* pRenderContext)
         Restir::SceneSettingsSingleton::instance()->RISSamplesCount = 32;
         Restir::SceneSettingsSingleton::instance()->nbReservoirPerPixel = 4;
         Restir::SceneSettingsSingleton::instance()->shadingLightExponent = 4.0f;
+
+        Restir::SceneSettingsSingleton::instance()->temporalLinearDepthThreshold = 9999999.9f;
+        Restir::SceneSettingsSingleton::instance()->temporalNormalThreshold = 0.5f;
         break;
 
     case Restir::SceneName::Sponza:
