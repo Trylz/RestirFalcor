@@ -152,25 +152,38 @@ void LightManager::createDragonBuddhaSceneLights(Falcor::ref<Falcor::Scene> pSce
 
 void LightManager::createBreakfastSceneLights(Falcor::ref<Falcor::Scene> pScene)
 {
-    // Add one red area light
+    const float lightRadius = 0.1f;
+    const float lightFalloff = std::min((lightRadius * lightRadius) * std::exp(1.0f / 0.0001f), 1.0f);
+    const float lightIntensity = 40.0f;
+
     {
         Light light;
-        light.mRadius = 0.1f;
-        light.mfallOff = std::min((light.mRadius * light.mRadius) * std::exp(1.0f / 0.0001f), 1.0f);
-        light.mColor = Falcor::float3(0.0, 1.f, 0.1f) * 40.0f;
+        light.mRadius = lightRadius;
+        light.mfallOff = lightFalloff;
+        light.mColor = Falcor::float3(0.0, 1.f, 0.1f) * lightIntensity;
         light.mWsPosition = Falcor::float3(3.1884f, 2.68466f, -1.33084f);
         mLights.push_back(light);
     }
 
-    // Add one green area light
     {
         Light light;
-        light.mRadius = 0.1f;
-        light.mfallOff = std::min((light.mRadius * light.mRadius) * std::exp(1.0f / 0.0001f), 1.0f);
-        light.mColor = Falcor::float3(0.0, 1.f, 0.1f) * 40.0f;
-        light.mWsPosition = Falcor::float3(3.1884f, 2.68466f, -1.33084f);
+        light.mRadius = lightRadius;
+        light.mfallOff = lightFalloff;
+        light.mColor = Falcor::float3(1.0f, 0.0f, 0.1f) * lightIntensity;
+        light.mWsPosition = Falcor::float3(-3.80251f, 2.03401f, -1.50989f);
         mLights.push_back(light);
     }
+
+
+    {
+        Light light;
+        light.mRadius = lightRadius;
+        light.mfallOff = lightFalloff;
+        light.mColor = Falcor::float3(0.0, 0.0f, 1.0f) * lightIntensity;
+        light.mWsPosition = Falcor::float3(-1.67098f, -0.102795f, 3.51986f);
+        mLights.push_back(light);
+    }
+
 }
 
 void LightManager::spawnPointLightsAlongSegment(
