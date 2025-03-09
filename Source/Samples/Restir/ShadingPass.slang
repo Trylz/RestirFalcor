@@ -34,7 +34,7 @@ float3 computeColor(RestirReservoir reservoir, uint2 pixelIdx, float3 P, float3 
     shading *= min(reservoir.m_W * (4.0f * gBlueNoise[pixelIdx % 470].x), 10.0f);
     shading /= Llen * Llen;
 
-    shading /= pow(Llen, shadingLightExponent); //An additional tweak ;)
+    shading /= pow(Llen, sceneShadingLightExponent); // An additional tweak ;)
 
     return shading;
 }
@@ -68,12 +68,13 @@ void ShadingPass(uint3 threadId: SV_DispatchThreadID)
     for (uint i = 0; i <nbReservoirPerPixel; ++i)
     {
         const RestirReservoir r = gReservoirs[reservoirsStart + i];
-        outColor += computeColor(r, pixel, P, N, V, diffuse, specular, roughness) + sceneAmbientColor * diffuse;
+        outColor += computeColor(r, pixel, P, N, V, diffuse, specular, roughness);
 
         hitDistance = min(hitDistance, r.m_hitDistance);
     }
 
     outColor/= nbReservoirPerPixel;
+    outColor += sceneAmbientColor * diffuse;
 
     gOutput[pixel] = float4(outColor, hitDistance);
 }
