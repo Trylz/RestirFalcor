@@ -26,13 +26,13 @@ https://github.com/Trylz/RestirFalcor/blob/master/TestScenes/DragonBuddha/README
 - [Windows 10 SDK (10.0.19041.0) for Windows 10, version 2004](https://developer.microsoft.com/en-us/windows/downloads/windows-10-sdk/)
 - Cuda toolkit installed. Right now 12.6(https://developer.nvidia.com/cuda-12-6-0-download-archive) is hardcoded
 **set(CMAKE_CUDA_COMPILER "C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.6/bin")** in root **CMakeLists.txt**  
-You may want to change this to your cuurrent cuda installation but note that only 12.6 was tested.
+You may want to change this to your current cuda installation but note that only 12.6 was tested.
 - An Nvidia GPU since Cuda is used
 - A GPU which supports DirectX Raytracing, such as the NVIDIA Titan V or GeForce RTX
 - NVIDIA driver 466.11 or newer
 
 ## Building Restir Falcor
-- Run the **setup_vs2022.bat** script after cloning this repository. The solution files are written to build/windows-vs2022 and the binary output is located in build/windows-vs2022/bin.  
+- Run the **setup_vs2022.bat** script after cloning this repository. The solution files are written to build/windows-vs2022.  
 - Open the **Falcor.sln** solution
 - Set **Samples/Restir** as your startup project
 - Set your configuration to **Release**(Unless you are debbuging)  
