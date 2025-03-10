@@ -39,11 +39,11 @@ You may want to change this to your current cuda installation but note that only
 - Build and run
 
 ## Test scenes
-Three test scenes are provided. The Arcade scene that ships with Falcor, the Breakfast scene and the DragonBuddha scene.  
+Four test scenes are provided. The Arcade scene that ships with Falcor, the Breakfast scene and the DragonBuddha scene.  
 To switch scene simply change the **SCENE_NAME** define  inside RestirApp.cpp file  
 0: Arcade scene  
 1: Dragon buddha scene.  
-2: Breakfast room scene.
+2: Breakfast room scene.  
 3: Sponza scene.  
 
 # Code overview
