@@ -77,7 +77,7 @@ bool RTXDI_IsValidNeighbor(float3 ourNorm, float3 theirNorm, float ourDepth, flo
     const float currlinearDepth = gCurrentNormalWs[pixel].w;
     const float prevlinearDepth = gPreviousNormalWs[pixel].w;
 
-    if (!RTXDI_IsValidNeighbor(currN, prevN, prevlinearDepth, currlinearDepth, 0.5f, 0.1f))
+    if (!RTXDI_IsValidNeighbor(currN, prevN, prevlinearDepth, currlinearDepth, 0.5f, 0.32f))
     {
         // If RTXDi like neighbor check fails check the normal.
         if (length(prevN - currN) > temporalNormalThreshold)
