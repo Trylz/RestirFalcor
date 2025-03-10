@@ -124,7 +124,7 @@ It is more noticeable when camera is far away from objects.
 ![Acnee_Image](https://github.com/user-attachments/assets/a780f519-a4d4-4d55-a3d5-d7881f5f2423)  
 GIF: https://github.com/user-attachments/assets/3888a81e-9df1-4b40-9b1a-e8cc7dcd4dfe
 
-**The following fixes it for the dragon buddha scene (while the breakfast room still exibits it)**
+**The following fixes it for the dragon buddha scene (while the breakfast room and Sponza still exibits it)**
 - Apply a blue noise when shading using a reservoir 
     **shading = shading * min(reservoir.m_W * (4.0f * gBlueNoise[pixelIdx % 470].x), 10.0f);** (ShadingPass.slang)
 - Clamp temporal reservoirs M to smaller value. 5 instead of 20 mentioned in paper

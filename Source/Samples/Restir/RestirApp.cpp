@@ -182,6 +182,10 @@ void RestirApp::loadScene(const Fbo* pTargetFbo, RenderContext* pRenderContext)
         Restir::SceneSettingsSingleton::instance()->RISSamplesCount = 32;
         Restir::SceneSettingsSingleton::instance()->nbReservoirPerPixel = 8;
         Restir::SceneSettingsSingleton::instance()->sceneShadingLightExponent = 1.6f;
+
+        Restir::SceneSettingsSingleton::instance()->temporalLinearDepthThreshold = 9999999.9f;
+        Restir::SceneSettingsSingleton::instance()->temporalNormalThreshold = 0.8f;
+
         Restir::SceneSettingsSingleton::instance()->sceneAmbientColor = Falcor::float3(0.04f, 0.04f, 0.04f);
         break;
     }
