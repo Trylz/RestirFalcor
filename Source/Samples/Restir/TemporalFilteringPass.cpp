@@ -10,11 +10,10 @@ using namespace Falcor;
 TemporalFilteringPass::TemporalFilteringPass(
     ref<Device> pDevice,
     Falcor::ref<Falcor::Scene> pScene,
-    SceneName sceneName,
     uint32_t width,
     uint32_t height
 )
-    : mpScene(pScene), mWidth(width), mHeight(height), mSceneName(sceneName)
+    : mpScene(pScene), mWidth(width), mHeight(height)
 {
     mpTemporalFilteringPass = ComputePass::create(pDevice, "Samples/Restir/TemporalFilteringPass.slang", "TemporalFilteringPass");
 }

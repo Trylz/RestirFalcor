@@ -206,7 +206,7 @@ void RestirApp::loadScene(const Fbo* pTargetFbo, RenderContext* pRenderContext)
 
 #if USE_TEMPORAL_FILTERING
     mpTemporalFilteringPass =
-        new Restir::TemporalFilteringPass(getDevice(), mpScene, kSceneName, pTargetFbo->getWidth(), pTargetFbo->getHeight());
+        new Restir::TemporalFilteringPass(getDevice(), mpScene, pTargetFbo->getWidth(), pTargetFbo->getHeight());
 #endif
 
 #if USE_SPATIAL_FILTERING
